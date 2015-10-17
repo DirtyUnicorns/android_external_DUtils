@@ -37,7 +37,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.hardware.ITorchService;
+//import android.hardware.ITorchService;
 import android.hardware.input.InputManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
@@ -66,7 +66,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.android.internal.statusbar.IStatusBarService;
-import com.android.internal.util.cm.QSUtils;
+//import com.android.internal.util.cm.QSUtils;
 import com.android.internal.utils.eos.Config.ActionConfig;
 
 public class ActionHandler {
@@ -170,16 +170,16 @@ public class ActionHandler {
         for (int i = 0; i < systemActions.length; i++) {
             ActionConfig c = systemActions[i].create(context);
             String action = c.getAction();
-            if (TextUtils.equals(action, SYSTEMUI_TASK_WIFIAP)
-                    && !QSUtils.deviceSupportsMobileData(context)) {
-                continue;
-            } else if (TextUtils.equals(action, SYSTEMUI_TASK_BT)
-                    && !QSUtils.deviceSupportsBluetooth()) {
-                continue;
-            } else if (TextUtils.equals(action, SYSTEMUI_TASK_TORCH)
-                    && !QSUtils.deviceSupportsFlashLight(context)) {
-                continue;
-            } else if ((TextUtils.equals(action, SYSTEMUI_TASK_VIBRATOR))
+//            if (TextUtils.equals(action, SYSTEMUI_TASK_WIFIAP)
+//                    && !QSUtils.deviceSupportsMobileData(context)) {
+//                continue;
+//            } else if (TextUtils.equals(action, SYSTEMUI_TASK_BT)
+//                    && !QSUtils.deviceSupportsBluetooth()) {
+//                continue;
+//            } else if (TextUtils.equals(action, SYSTEMUI_TASK_TORCH)
+//                    && !QSUtils.deviceSupportsFlashLight(context)) {
+//                continue;
+            if ((TextUtils.equals(action, SYSTEMUI_TASK_VIBRATOR))
                     || (TextUtils.equals(action, SYSTEMUI_TASK_VIB_SILENT))) {
                 Vibrator vib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
                 if (vib == null || !vib.hasVibrator()) {
@@ -321,8 +321,8 @@ public class ActionHandler {
             launchAssistAction(context);
         } else if (action.equals(SYSTEMUI_TASK_POWER_MENU)) {
             showPowerMenu(context);
-        } else if (action.equals(SYSTEMUI_TASK_TORCH)) {
-            toggleTorch();
+//        } else if (action.equals(SYSTEMUI_TASK_TORCH)) {
+//            toggleTorch();
         } else if (action.equals(SYSTEMUI_TASK_CAMERA)) {
             launchCamera(context);
         } else if (action.equals(SYSTEMUI_TASK_WIFI)) {
@@ -618,6 +618,7 @@ public class ActionHandler {
         }
     }
 
+/*
     private static void toggleTorch() {
         try {
             ITorchService torchService = ITorchService.Stub.asInterface(ServiceManager
@@ -627,6 +628,7 @@ public class ActionHandler {
             Log.e(TAG, "Exception thrown acquiring torch service" + e.toString());
         }
     }
+*/
 
     private static void takeScreenshot(Context context) {
         context.sendBroadcastAsUser(new Intent(INTENT_SCREENSHOT), new UserHandle(
@@ -692,7 +694,7 @@ public class ActionHandler {
     private static void launchAssistAction(Context context) {
         sendCloseSystemWindows("assist");
         Intent intent = ((SearchManager) context.getSystemService(Context.SEARCH_SERVICE))
-                .getAssistIntent(context, true, UserHandle.USER_CURRENT);
+                .getAssistIntent(true);
         if (intent != null) {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                     | Intent.FLAG_ACTIVITY_SINGLE_TOP

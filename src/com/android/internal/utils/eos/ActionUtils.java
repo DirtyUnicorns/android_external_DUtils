@@ -28,7 +28,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.content.res.ThemeConfig;
+//import android.content.res.ThemeConfig;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -271,12 +271,12 @@ public final class ActionUtils {
                     Resources res = getResourcesForPackage(context,
                             ActionHandler.systemActions[i].mIconPackage);
                     String iconName = ActionHandler.systemActions[i].mIconName;
-                    if (isNavbarResource(action)) {
-                        d = getNavbarThemedDrawable(context, res, iconName);
-                    } else {
+//                    if (isNavbarResource(action)) {
+//                        d = getNavbarThemedDrawable(context, res, iconName);
+//                    } else {
                         d = getDrawable(res, iconName,
                                 ActionHandler.systemActions[i].mIconPackage);
-                    }
+//                    }
                 }
             }
         } else {
@@ -489,6 +489,7 @@ public final class ActionUtils {
         }
     }
 
+/*
     public static Drawable getNavbarThemedDrawable(Context context, Resources defRes,
             String drawableName) {
         if (context == null)
@@ -544,4 +545,5 @@ public final class ActionUtils {
         }
         return res != null ? res : context.getResources();
     }
+*/
 }

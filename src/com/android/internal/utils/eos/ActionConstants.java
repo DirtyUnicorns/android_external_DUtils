@@ -153,7 +153,8 @@ public class ActionConstants {
 
         @Override
         public String getUri() {
-            return Settings.System.NAVIGATION_BUTTON_ACTIONS;
+            //return Settings.System.NAVIGATION_BUTTON_ACTIONS;
+            return "navigation_button_config";
         }
 
         @Override
@@ -266,7 +267,8 @@ public class ActionConstants {
 
         @Override
         public String getUri() {
-            return Settings.System.HWKEY_BUTTON_ACTIONS;
+            //return Settings.System.HWKEY_BUTTON_ACTIONS;
+            return "hwkey_config";
         }
 
         @Override
@@ -410,7 +412,8 @@ public class ActionConstants {
 
         @Override
         public String getUri() {
-            return Settings.System.FLING_GESTURE_ACTIONS;
+            //return Settings.System.FLING_GESTURE_ACTIONS;
+            return "fling_config";
         }
 
         @Override
@@ -485,7 +488,8 @@ public class ActionConstants {
 
         @Override
         public String getUri() {
-            return Settings.System.PIE_BUTTONS_CONFIG;
+            //return Settings.System.PIE_BUTTONS_CONFIG;
+            return "pie_primary_config";
         }
 
         @Override
@@ -590,7 +594,8 @@ public class ActionConstants {
 
         @Override
         public String getUri() {
-            return Settings.System.PIE_BUTTONS_CONFIG_SECOND_LAYER;
+            //return Settings.System.PIE_BUTTONS_CONFIG_SECOND_LAYER;
+            return "pie_second_config";
         }
 
         @Override
