@@ -28,6 +28,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.content.res.ThemeConfig;
 //import android.content.res.ThemeConfig;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -69,7 +70,6 @@ public final class ActionUtils {
     public static final String STRING = "string";
     public static final String ANIM = "anim";
 
-    private static final Random sRnd = new Random();
     // 10 inch tablets
     public static boolean isXLargeScreen() {
         int screenLayout = Resources.getSystem().getConfiguration().screenLayout &
@@ -489,7 +489,7 @@ public final class ActionUtils {
         }
     }
 
-/*
+
     public static Drawable getNavbarThemedDrawable(Context context, Resources defRes,
             String drawableName) {
         if (context == null)
@@ -545,5 +545,5 @@ public final class ActionUtils {
         }
         return res != null ? res : context.getResources();
     }
-*/
+
 }
