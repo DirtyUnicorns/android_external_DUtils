@@ -20,8 +20,7 @@
 
 package com.android.internal.utils.eos;
 
-import android.app.ActivityManagerNative;
-import android.app.IActivityManager;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -32,27 +31,29 @@ import android.content.res.ThemeConfig;
 //import android.content.res.ThemeConfig;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.RemoteException;
-import android.os.ServiceManager;
-import android.os.SystemProperties;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Random;
 
+import com.android.internal.telephony.PhoneConstants;
 import com.android.internal.utils.eos.ActionConstants.Defaults;
 import com.android.internal.utils.eos.Config.ActionConfig;
 import com.android.internal.utils.eos.Config.ButtonConfig;
 
-public final class ActionUtils {
+public final class EosActionUtils {
     public static final String ANDROIDNS = "http://schemas.android.com/apk/res/android";
     public static final String PACKAGE_SYSTEMUI = "com.android.systemui";
     public static final String PACKAGE_ANDROID = "android";
@@ -99,6 +100,70 @@ public final class ActionUtils {
     public static boolean isCapKeyDevice(Context context) {
         return !(Boolean)getValue(context, "config_showNavigationBar", BOOL, PACKAGE_ANDROID);
     }
+
+
+    public static boolean deviceSupportsLte(Context ctx) {
+        final TelephonyManager tm = (TelephonyManager)
+                ctx.getSystemService(Context.TELEPHONY_SERVICE);
+        return (tm.getLteOnCdmaMode() == PhoneConstants.LTE_ON_CDMA_TRUE)
+                || tm.getLteOnGsmMode() != 0;
+    }
+
+    public static boolean deviceSupportsDdsSupported(Context context) {
+        TelephonyManager tm = (TelephonyManager)
+                context.getSystemService(Context.TELEPHONY_SERVICE);
+        return tm.isMultiSimEnabled()
+                && tm.getMultiSimConfiguration() == TelephonyManager.MultiSimVariants.DSDA;
+    }
+
+    public static boolean deviceSupportsMobileData(Context ctx) {
+        ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(
+                Context.CONNECTIVITY_SERVICE);
+        return cm.isNetworkSupported(ConnectivityManager.TYPE_MOBILE);
+    }
+
+    public static boolean deviceSupportsBluetooth() {
+        return BluetoothAdapter.getDefaultAdapter() != null;
+    }
+
+    public static boolean deviceSupportsNfc(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+        return packageManager.hasSystemFeature(PackageManager.FEATURE_NFC);
+    }
+
+    public static boolean deviceSupportsFlashLight(Context context) {
+        CameraManager cameraManager = (CameraManager) context.getSystemService(
+                Context.CAMERA_SERVICE);
+        try {
+            String[] ids = cameraManager.getCameraIdList();
+            for (String id : ids) {
+                CameraCharacteristics c = cameraManager.getCameraCharacteristics(id);
+                Boolean flashAvailable = c.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+                Integer lensFacing = c.get(CameraCharacteristics.LENS_FACING);
+                if (flashAvailable != null
+                        && flashAvailable
+                        && lensFacing != null
+                        && lensFacing == CameraCharacteristics.LENS_FACING_BACK) {
+                    return true;
+                }
+            }
+        } catch (CameraAccessException | AssertionError e) {
+            // Ignore
+        }
+        return false;
+    }
+
+    public static boolean deviceSupportsCompass(Context context) {
+        SensorManager sm = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        return sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null
+                && sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null;
+    }
+
+	public static boolean deviceSupportsDoze(Context context) {
+		String name = (String) getValue(context, "config_dozeComponent",
+				STRING, PACKAGE_ANDROID);
+		return !TextUtils.isEmpty(name);
+	}
 
     /**
      * This method converts dp unit to equivalent pixels, depending on device

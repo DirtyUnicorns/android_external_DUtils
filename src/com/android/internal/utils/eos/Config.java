@@ -55,7 +55,7 @@ public class Config {
         if (ctx == null || defaults == null) {
             return null;
         }
-        String config = Settings.System.getStringForUser(
+        String config = Settings.Secure.getStringForUser(
                 ctx.getContentResolver(), defaults.getUri(),
                 UserHandle.USER_CURRENT);
         if (config == null) {
@@ -120,7 +120,7 @@ public class Config {
         if (s.endsWith(ActionConstants.ACTION_DELIMITER)) {
             s = removeLastChar(s);  // trim final delimiter if need be
         }
-        Settings.System.putStringForUser(ctx.getContentResolver(), defaults.getUri(), s,
+        Settings.Secure.putStringForUser(ctx.getContentResolver(), defaults.getUri(), s,
                 UserHandle.USER_CURRENT);
     }
 
@@ -251,7 +251,7 @@ public class Config {
 
         public ActionConfig(Context ctx, String action) {
             this.action = action;
-            this.label = ActionUtils.getFriendlyNameForUri(ctx.getPackageManager(), action);
+            this.label = EosActionUtils.getFriendlyNameForUri(ctx.getPackageManager(), action);
         }
 
         public String getAction() {
@@ -279,11 +279,11 @@ public class Config {
         }
 
         public Drawable getDefaultIcon(Context ctx) {
-            return ActionUtils.getDrawableForAction(ctx, action);
+            return EosActionUtils.getDrawableForAction(ctx, action);
         }
 
         public Drawable getCurrentIcon(Context ctx) {
-            return ActionUtils.getDrawableForAction(ctx, getIconUri());
+            return EosActionUtils.getDrawableForAction(ctx, getIconUri());
         }
 
         public boolean hasNoAction() {

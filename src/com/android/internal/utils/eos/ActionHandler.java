@@ -96,9 +96,6 @@ public class ActionHandler {
     public static final String SYSTEMUI_TASK_LAST_APP = "task_last_app";
     public static final String SYSTEMUI_TASK_VOICE_SEARCH = "task_voice_search";
     public static final String SYSTEMUI_TASK_APP_SEARCH = "task_app_search";
-    public static final String SYSTEMUI_TASK_SILENT = "task_silent";
-    public static final String SYSTEMUI_TASK_VIBRATOR = "task_vibrator";
-    public static final String SYSTEMUI_TASK_VIB_SILENT = "task_vib_silent";
     public static final String SYSTEMUI_TASK_MENU = "task_menu";
     public static final String SYSTEMUI_TASK_BACK = "task_back";
     public static final String SYSTEMUI_TASK_HOME = "task_home";
@@ -125,9 +122,6 @@ public class ActionHandler {
         LastApp(SYSTEMUI_TASK_LAST_APP, "Last app", SYSTEMUI, "ic_sysbar_lastapp"),
         Overview(SYSTEMUI_TASK_RECENTS, "Overview", SYSTEMUI, "ic_sysbar_recent"),
         PowerMenu(SYSTEMUI_TASK_POWER_MENU, "Power menu", SYSTEMUI, "ic_sysbar_power_menu"),
-        Silent(SYSTEMUI_TASK_SILENT, "Normal/Silent", SYSTEMUI, "ic_sysbar_silent"),
-        Vibrator(SYSTEMUI_TASK_VIBRATOR, "Normal/Vibrate", "SYSTEMUI", "ic_sysbar_vib"),
-        SilentVib(SYSTEMUI_TASK_VIB_SILENT, "Normal/Vibrate/Silent", SYSTEMUI, "ic_sysbar_ring_vib_silent"),
         Menu(SYSTEMUI_TASK_MENU, "Menu", SYSTEMUI, "ic_sysbar_menu"),
         Back(SYSTEMUI_TASK_BACK, "Back", SYSTEMUI, "ic_sysbar_back"),
         Home(SYSTEMUI_TASK_HOME, "Home", SYSTEMUI, "ic_sysbar_home");
@@ -160,8 +154,7 @@ public class ActionHandler {
             SystemAction.PowerMenu, SystemAction.Overview,
             SystemAction.Menu, SystemAction.Back,
             SystemAction.VoiceSearch, SystemAction.Home,
-            SystemAction.Silent, SystemAction.Vibrator,
-            SystemAction.SilentVib, SystemAction.ExpandedDesktop,
+            SystemAction.ExpandedDesktop,
             SystemAction.Screenrecord
     };
 
@@ -170,28 +163,27 @@ public class ActionHandler {
         for (int i = 0; i < systemActions.length; i++) {
             ActionConfig c = systemActions[i].create(context);
             String action = c.getAction();
-//            if (TextUtils.equals(action, SYSTEMUI_TASK_WIFIAP)
-//                    && !QSUtils.deviceSupportsMobileData(context)) {
-//                continue;
-//            } else if (TextUtils.equals(action, SYSTEMUI_TASK_BT)
-//                    && !QSUtils.deviceSupportsBluetooth()) {
-//                continue;
-//            } else if (TextUtils.equals(action, SYSTEMUI_TASK_TORCH)
-//                    && !QSUtils.deviceSupportsFlashLight(context)) {
-//                continue;
-            if ((TextUtils.equals(action, SYSTEMUI_TASK_VIBRATOR))
-                    || (TextUtils.equals(action, SYSTEMUI_TASK_VIB_SILENT))) {
-                Vibrator vib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                if (vib == null || !vib.hasVibrator()) {
-                    continue;
-                }
+            if (TextUtils.equals(action, SYSTEMUI_TASK_WIFIAP)
+                    && !EosActionUtils.deviceSupportsMobileData(context)) {
+                continue;
+            } else if (TextUtils.equals(action, SYSTEMUI_TASK_BT)
+                    && !EosActionUtils.deviceSupportsBluetooth()) {
+                continue;
+            } else if (TextUtils.equals(action, SYSTEMUI_TASK_TORCH)) {
+                // && !EosActionUtils.deviceSupportsFlashLight(context)) {
+                continue;
+            } else if (TextUtils.equals(action, SYSTEMUI_TASK_EXPANDED_DESKTOP)) {
+                // && !EosActionUtils.deviceSupportsFlashLight(context)) {
+                continue;
             } else if (TextUtils.equals(action, SYSTEMUI_TASK_CAMERA)
                     && context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
                 continue;
             } else if (TextUtils.equals(action, SYSTEMUI_TASK_SCREENRECORD)) {
-                if (!ActionUtils.getBoolean(context, "config_enableScreenrecordChord", ActionUtils.PACKAGE_ANDROID)) {
-                    continue;
-                }
+                // if (!EosActionUtils.getBoolean(context, "config_enableScreenrecordChord",
+                // EosActionUtils.PACKAGE_ANDROID)) {
+                // continue;
+                // }
+                continue;
             }
             bundle.add(c);
         }
@@ -297,7 +289,7 @@ public class ActionHandler {
         }
         // not a system action, should be intent
         if (!action.startsWith(SYSTEM_PREFIX)) {
-            Intent intent = ActionUtils.getIntent(action);
+            Intent intent = EosActionUtils.getIntent(action);
             if (intent == null) {
                 return;
             }
@@ -343,12 +335,6 @@ public class ActionHandler {
             launchVoiceSearch(context);
         } else if (action.equals(SYSTEMUI_TASK_APP_SEARCH)) {
             triggerVirtualKeypress(context, KeyEvent.KEYCODE_SEARCH);
-        } else if (action.equals(SYSTEMUI_TASK_SILENT)) {
-            toggleSilent(context);
-        } else if (action.equals(SYSTEMUI_TASK_VIBRATOR)) {
-            toggleVib(context);
-        } else if (action.equals(SYSTEMUI_TASK_VIB_SILENT)) {
-            toggleVibSilent(context);
         } else if (action.equals(SYSTEMUI_TASK_MENU)) {
             triggerVirtualKeypress(context, KeyEvent.KEYCODE_MENU);
         } else if (action.equals(SYSTEMUI_TASK_BACK)) {
@@ -386,8 +372,8 @@ public class ActionHandler {
 
         if (lastTask != null) {
             final ActivityOptions opts = ActivityOptions.makeCustomAnimation(context,
-                    ActionUtils.getIdentifier(context, "last_app_in", "anim", ActionUtils.PACKAGE_ANDROID),
-                    ActionUtils.getIdentifier(context, "last_app_out", "anim", ActionUtils.PACKAGE_ANDROID));
+                    EosActionUtils.getIdentifier(context, "last_app_in", "anim", EosActionUtils.PACKAGE_ANDROID),
+                    EosActionUtils.getIdentifier(context, "last_app_out", "anim", EosActionUtils.PACKAGE_ANDROID));
             am.moveTaskToFront(lastTask.id, ActivityManager.MOVE_TASK_NO_USER_ACTION,
                     opts.toBundle());
         }
@@ -426,66 +412,6 @@ public class ActionHandler {
         }
     }
 
-    private static void toggleSilent(Context context) {
-        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        if (am != null && ActivityManagerNative.isSystemReady()) {
-            if (am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
-                am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-            } else {
-                am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-                ToneGenerator tg = new ToneGenerator(
-                        AudioManager.STREAM_NOTIFICATION,
-                        (int) (ToneGenerator.MAX_VOLUME * 0.85));
-                if (tg != null) {
-                    tg.startTone(ToneGenerator.TONE_PROP_BEEP);
-                }
-            }
-        }
-    }
-
-    private static void toggleVib(Context context) {
-        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        if (am != null && ActivityManagerNative.isSystemReady()) {
-            if (am.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE) {
-                am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
-                Vibrator vib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                if (vib != null) {
-                    vib.vibrate(50);
-                }
-            } else {
-                am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-                ToneGenerator tg = new ToneGenerator(
-                        AudioManager.STREAM_NOTIFICATION,
-                        (int) (ToneGenerator.MAX_VOLUME * 0.85));
-                if (tg != null) {
-                    tg.startTone(ToneGenerator.TONE_PROP_BEEP);
-                }
-            }
-        }
-    }
-
-    private static void toggleVibSilent(Context context) {
-        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        if (am != null && ActivityManagerNative.isSystemReady()) {
-            if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
-                am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
-                Vibrator vib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                if (vib != null) {
-                    vib.vibrate(50);
-                }
-            } else if (am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE) {
-                am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-            } else {
-                am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-                ToneGenerator tg = new ToneGenerator(
-                        AudioManager.STREAM_NOTIFICATION,
-                        (int) (ToneGenerator.MAX_VOLUME * 0.85));
-                if (tg != null) {
-                    tg.startTone(ToneGenerator.TONE_PROP_BEEP);
-                }
-            }
-        }
-    }
 /*
     private static void toggleExpandedDesktop(Context context) {
         ContentResolver cr = context.getContentResolver();

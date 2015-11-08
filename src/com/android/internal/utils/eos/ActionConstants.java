@@ -332,40 +332,40 @@ public class ActionConstants {
 
         static {
             defMap.put(CONFIG_fling_touchslop_increase_factor, new ConfigHolder(
-                    ActionUtils.PACKAGE_SYSTEMUI, CONFIG_fling_touchslop_increase_factor,
-                    ActionUtils.FORMAT_FLOAT, ActionUtils.DIMEN));
+                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_fling_touchslop_increase_factor,
+                    EosActionUtils.FORMAT_FLOAT, EosActionUtils.DIMEN));
             defMap.put(CONFIG_FlingLongSwipePortraitLeft, new ConfigHolder(
-                    ActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipePortraitLeft,
-                    ActionUtils.FORMAT_FLOAT, ActionUtils.DIMEN));
+                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipePortraitLeft,
+                    EosActionUtils.FORMAT_FLOAT, EosActionUtils.DIMEN));
             defMap.put(CONFIG_FlingLongSwipePortraitRight, new ConfigHolder(
-                    ActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipePortraitRight,
-                    ActionUtils.FORMAT_FLOAT, ActionUtils.DIMEN));
+                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipePortraitRight,
+                    EosActionUtils.FORMAT_FLOAT, EosActionUtils.DIMEN));
             defMap.put(CONFIG_FlingLongSwipeLandscapeLeft, new ConfigHolder(
-                    ActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipeLandscapeLeft,
-                    ActionUtils.FORMAT_FLOAT, ActionUtils.DIMEN));
+                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipeLandscapeLeft,
+                    EosActionUtils.FORMAT_FLOAT, EosActionUtils.DIMEN));
             defMap.put(CONFIG_FlingLongSwipeLandscapeRight, new ConfigHolder(
-                    ActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipeLandscapeRight,
-                    ActionUtils.FORMAT_FLOAT, ActionUtils.DIMEN));
+                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipeLandscapeRight,
+                    EosActionUtils.FORMAT_FLOAT, EosActionUtils.DIMEN));
             defMap.put(CONFIG_FlingLongSwipeVerticalUp, new ConfigHolder(
-                    ActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipeVerticalUp,
-                    ActionUtils.FORMAT_FLOAT, ActionUtils.DIMEN));
+                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipeVerticalUp,
+                    EosActionUtils.FORMAT_FLOAT, EosActionUtils.DIMEN));
             defMap.put(CONFIG_FlingLongSwipeVerticalDown, new ConfigHolder(
-                    ActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipeVerticalDown,
-                    ActionUtils.FORMAT_FLOAT, ActionUtils.DIMEN));
+                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipeVerticalDown,
+                    EosActionUtils.FORMAT_FLOAT, EosActionUtils.DIMEN));
             defMap.put(CONFIG_pulsePathEffect_1, new ConfigHolder(
-                    ActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulsePathEffect_1, ActionUtils.DIMEN_PIXEL));
+                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulsePathEffect_1, EosActionUtils.DIMEN_PIXEL));
             defMap.put(CONFIG_pulsePathEffect_2, new ConfigHolder(
-                    ActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulsePathEffect_2, ActionUtils.DIMEN_PIXEL));
+                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulsePathEffect_2, EosActionUtils.DIMEN_PIXEL));
             defMap.put(CONFIG_pulsePathStrokeWidth, new ConfigHolder(
-                    ActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulsePathStrokeWidth, ActionUtils.DIMEN_PIXEL));
+                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulsePathStrokeWidth, EosActionUtils.DIMEN_PIXEL));
             defMap.put(CONFIG_pulseFillColor, new ConfigHolder(
-                    ActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulseFillColor, ActionUtils.COLOR));
+                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulseFillColor, EosActionUtils.COLOR));
             defMap.put(CONFIG_pulseDivisions, new ConfigHolder(
-                    ActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulseDivisions, ActionUtils.INT));
+                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulseDivisions, EosActionUtils.INT));
             defMap.put(CONFIG_pulseDbFuzzFactor, new ConfigHolder(
-                    ActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulseDbFuzzFactor, ActionUtils.INT));
+                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulseDbFuzzFactor, EosActionUtils.INT));
             defMap.put(CONFIG_pulseDbFuzz, new ConfigHolder(
-                    ActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulseDbFuzz, ActionUtils.INT));
+                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulseDbFuzz, EosActionUtils.INT));
         }
 
         private static final Map<String, ConfigMap> configMap = new HashMap<String, ConfigMap>();
@@ -412,8 +412,7 @@ public class ActionConstants {
 
         @Override
         public String getUri() {
-            //return Settings.System.FLING_GESTURE_ACTIONS;
-            return "fling_config";
+            return Settings.Secure.FLING_GESTURE_ACTIONS;
         }
 
         @Override
@@ -625,9 +624,9 @@ public class ActionConstants {
         Bundle b = new Bundle();
         for (Map.Entry<String, ConfigHolder> entry : configMap.entrySet()) {
             ConfigHolder holder = entry.getValue();
-            Object obj = ActionUtils.getValue(ctx, holder.name, holder.type, holder.format,
+            Object obj = EosActionUtils.getValue(ctx, holder.name, holder.type, holder.format,
                     holder.pkg);
-            ActionUtils.putValue(holder.name, obj, holder.type, b);
+            EosActionUtils.putValue(holder.name, obj, holder.type, b);
         }
         return b;
     }

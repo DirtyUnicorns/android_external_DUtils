@@ -118,7 +118,7 @@ public class ImageHelper {
         if (image instanceof VectorDrawable) {
             return image;
         } else {
-            int newSize = ActionUtils.dpToPx(context, size);
+            int newSize = EosActionUtils.dpToPx(context, size);
             Bitmap bitmap = ((BitmapDrawable) image).getBitmap();
             Bitmap scaledBitmap = Bitmap.createBitmap(newSize, newSize, Config.ARGB_8888);
 
