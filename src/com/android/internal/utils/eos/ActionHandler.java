@@ -104,6 +104,7 @@ public class ActionHandler {
     public static final String INTENT_SHOW_POWER_MENU = "action_handler_show_power_menu";
     public static final String INTENT_TOGGLE_SCREENRECORD = "action_handler_toggle_screenrecord";
     public static final String INTENT_SCREENSHOT = "action_handler_screenshot";
+    public static final String INTENT_TOGGLE_FLASHLIGHT = "action_handler_toggle_flashlight";
 
     static enum SystemAction {
         NoAction(SYSTEMUI_TASK_NO_ACTION, "No action", SYSTEMUI, "ic_sysbar_null"),
@@ -170,8 +171,8 @@ public class ActionHandler {
             } else if (TextUtils.equals(action, SYSTEMUI_TASK_BT)
                     && !EosActionUtils.deviceSupportsBluetooth()) {
                 continue;
-            } else if (TextUtils.equals(action, SYSTEMUI_TASK_TORCH)) {
-                // && !EosActionUtils.deviceSupportsFlashLight(context)) {
+            } else if (TextUtils.equals(action, SYSTEMUI_TASK_TORCH)
+                 && !EosActionUtils.deviceSupportsFlashLight(context)) {
                 continue;
             } else if (TextUtils.equals(action, SYSTEMUI_TASK_CAMERA)
                     && context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
@@ -311,8 +312,8 @@ public class ActionHandler {
             launchAssistAction(context);
         } else if (action.equals(SYSTEMUI_TASK_POWER_MENU)) {
             showPowerMenu(context);
-//        } else if (action.equals(SYSTEMUI_TASK_TORCH)) {
-//            toggleTorch();
+        } else if (action.equals(SYSTEMUI_TASK_TORCH)) {
+            toggleTorch(context);
         } else if (action.equals(SYSTEMUI_TASK_CAMERA)) {
             launchCamera(context);
         } else if (action.equals(SYSTEMUI_TASK_WIFI)) {
@@ -542,17 +543,10 @@ public class ActionHandler {
         }
     }
 
-/*
-    private static void toggleTorch() {
-        try {
-            ITorchService torchService = ITorchService.Stub.asInterface(ServiceManager
-                    .getService(Context.TORCH_SERVICE));
-            torchService.toggleTorch();
-        } catch (Exception e) {
-            Log.e(TAG, "Exception thrown acquiring torch service" + e.toString());
-        }
+    private static void toggleTorch(Context context) {
+        context.sendBroadcastAsUser(new Intent(INTENT_TOGGLE_FLASHLIGHT), new UserHandle(
+                UserHandle.USER_ALL));
     }
-*/
 
     private static void takeScreenshot(Context context) {
         context.sendBroadcastAsUser(new Intent(INTENT_SCREENSHOT), new UserHandle(
