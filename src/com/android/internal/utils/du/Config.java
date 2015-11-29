@@ -29,21 +29,21 @@
  * for easy loading and setting
  * 
  */
-package com.android.internal.utils.eos;
+package com.android.internal.utils.du;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.android.internal.utils.du.ActionHandler;
+import com.android.internal.utils.du.ActionConstants.ConfigMap;
+import com.android.internal.utils.du.ActionConstants.Defaults;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.text.TextUtils;
-
-import com.android.internal.utils.eos.ActionHandler;
-import com.android.internal.utils.eos.ActionConstants.ConfigMap;
-import com.android.internal.utils.eos.ActionConstants.Defaults;
 
 public class Config {
     private interface Stringable {
@@ -251,7 +251,7 @@ public class Config {
 
         public ActionConfig(Context ctx, String action) {
             this.action = action;
-            this.label = EosActionUtils.getFriendlyNameForUri(ctx.getPackageManager(), action);
+            this.label = DUActionUtils.getFriendlyNameForUri(ctx.getPackageManager(), action);
         }
 
         public String getAction() {
@@ -279,11 +279,11 @@ public class Config {
         }
 
         public Drawable getDefaultIcon(Context ctx) {
-            return EosActionUtils.getDrawableForAction(ctx, action);
+            return DUActionUtils.getDrawableForAction(ctx, action);
         }
 
         public Drawable getCurrentIcon(Context ctx) {
-            return EosActionUtils.getDrawableForAction(ctx, getIconUri());
+            return DUActionUtils.getDrawableForAction(ctx, getIconUri());
         }
 
         public boolean hasNoAction() {

@@ -27,10 +27,13 @@
  * 
  */
 
-package com.android.internal.utils.eos;
+package com.android.internal.utils.du;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.android.internal.utils.du.ActionHandler.SystemAction;
+import com.android.internal.utils.du.Config.ActionConfig;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -38,9 +41,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.util.TypedValue;
-
-import com.android.internal.utils.eos.ActionHandler.SystemAction;
-import com.android.internal.utils.eos.Config.ActionConfig;
 
 public class ActionConstants {
     public static interface Defaults {
@@ -332,40 +332,40 @@ public class ActionConstants {
 
         static {
             defMap.put(CONFIG_fling_touchslop_increase_factor, new ConfigHolder(
-                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_fling_touchslop_increase_factor,
-                    EosActionUtils.FORMAT_FLOAT, EosActionUtils.DIMEN));
+                    DUActionUtils.PACKAGE_SYSTEMUI, CONFIG_fling_touchslop_increase_factor,
+                    DUActionUtils.FORMAT_FLOAT, DUActionUtils.DIMEN));
             defMap.put(CONFIG_FlingLongSwipePortraitLeft, new ConfigHolder(
-                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipePortraitLeft,
-                    EosActionUtils.FORMAT_FLOAT, EosActionUtils.DIMEN));
+                    DUActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipePortraitLeft,
+                    DUActionUtils.FORMAT_FLOAT, DUActionUtils.DIMEN));
             defMap.put(CONFIG_FlingLongSwipePortraitRight, new ConfigHolder(
-                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipePortraitRight,
-                    EosActionUtils.FORMAT_FLOAT, EosActionUtils.DIMEN));
+                    DUActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipePortraitRight,
+                    DUActionUtils.FORMAT_FLOAT, DUActionUtils.DIMEN));
             defMap.put(CONFIG_FlingLongSwipeLandscapeLeft, new ConfigHolder(
-                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipeLandscapeLeft,
-                    EosActionUtils.FORMAT_FLOAT, EosActionUtils.DIMEN));
+                    DUActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipeLandscapeLeft,
+                    DUActionUtils.FORMAT_FLOAT, DUActionUtils.DIMEN));
             defMap.put(CONFIG_FlingLongSwipeLandscapeRight, new ConfigHolder(
-                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipeLandscapeRight,
-                    EosActionUtils.FORMAT_FLOAT, EosActionUtils.DIMEN));
+                    DUActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipeLandscapeRight,
+                    DUActionUtils.FORMAT_FLOAT, DUActionUtils.DIMEN));
             defMap.put(CONFIG_FlingLongSwipeVerticalUp, new ConfigHolder(
-                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipeVerticalUp,
-                    EosActionUtils.FORMAT_FLOAT, EosActionUtils.DIMEN));
+                    DUActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipeVerticalUp,
+                    DUActionUtils.FORMAT_FLOAT, DUActionUtils.DIMEN));
             defMap.put(CONFIG_FlingLongSwipeVerticalDown, new ConfigHolder(
-                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipeVerticalDown,
-                    EosActionUtils.FORMAT_FLOAT, EosActionUtils.DIMEN));
+                    DUActionUtils.PACKAGE_SYSTEMUI, CONFIG_FlingLongSwipeVerticalDown,
+                    DUActionUtils.FORMAT_FLOAT, DUActionUtils.DIMEN));
             defMap.put(CONFIG_pulsePathEffect_1, new ConfigHolder(
-                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulsePathEffect_1, EosActionUtils.DIMEN_PIXEL));
+                    DUActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulsePathEffect_1, DUActionUtils.DIMEN_PIXEL));
             defMap.put(CONFIG_pulsePathEffect_2, new ConfigHolder(
-                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulsePathEffect_2, EosActionUtils.DIMEN_PIXEL));
+                    DUActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulsePathEffect_2, DUActionUtils.DIMEN_PIXEL));
             defMap.put(CONFIG_pulsePathStrokeWidth, new ConfigHolder(
-                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulsePathStrokeWidth, EosActionUtils.DIMEN_PIXEL));
+                    DUActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulsePathStrokeWidth, DUActionUtils.DIMEN_PIXEL));
             defMap.put(CONFIG_pulseFillColor, new ConfigHolder(
-                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulseFillColor, EosActionUtils.COLOR));
+                    DUActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulseFillColor, DUActionUtils.COLOR));
             defMap.put(CONFIG_pulseDivisions, new ConfigHolder(
-                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulseDivisions, EosActionUtils.INT));
+                    DUActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulseDivisions, DUActionUtils.INT));
             defMap.put(CONFIG_pulseDbFuzzFactor, new ConfigHolder(
-                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulseDbFuzzFactor, EosActionUtils.INT));
+                    DUActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulseDbFuzzFactor, DUActionUtils.INT));
             defMap.put(CONFIG_pulseDbFuzz, new ConfigHolder(
-                    EosActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulseDbFuzz, EosActionUtils.INT));
+                    DUActionUtils.PACKAGE_SYSTEMUI, CONFIG_pulseDbFuzz, DUActionUtils.INT));
         }
 
         private static final Map<String, ConfigMap> configMap = new HashMap<String, ConfigMap>();
@@ -624,9 +624,9 @@ public class ActionConstants {
         Bundle b = new Bundle();
         for (Map.Entry<String, ConfigHolder> entry : configMap.entrySet()) {
             ConfigHolder holder = entry.getValue();
-            Object obj = EosActionUtils.getValue(ctx, holder.name, holder.type, holder.format,
+            Object obj = DUActionUtils.getValue(ctx, holder.name, holder.type, holder.format,
                     holder.pkg);
-            EosActionUtils.putValue(holder.name, obj, holder.type, b);
+            DUActionUtils.putValue(holder.name, obj, holder.type, b);
         }
         return b;
     }

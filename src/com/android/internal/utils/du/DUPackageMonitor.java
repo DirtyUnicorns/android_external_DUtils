@@ -20,7 +20,7 @@
  * to the UI thread
  */
 
-package com.android.internal.utils.eos;
+package com.android.internal.utils.du;
 
 import android.content.Context;
 import android.os.Handler;
@@ -28,7 +28,7 @@ import android.os.Message;
 
 import java.util.ArrayList;
 
-public class EosPackageMonitor extends com.android.internal.content.PackageMonitor {
+public class DUPackageMonitor extends com.android.internal.content.PackageMonitor {
     private static final int MSG_PACKAGE_ADDED = 1;
     private static final int MSG_PACKAGE_REMOVED = 2;
     private static final int MSG_PACKAGE_CHANGED = 3;

@@ -15,7 +15,7 @@
 * limitations under the License.
 */
 
-package com.android.internal.utils.eos;
+package com.android.internal.utils.du;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -118,7 +118,7 @@ public class ImageHelper {
         if (image instanceof VectorDrawable) {
             return image;
         } else {
-            int newSize = EosActionUtils.dpToPx(context, size);
+            int newSize = DUActionUtils.dpToPx(context, size);
             Bitmap bitmap = ((BitmapDrawable) image).getBitmap();
             Bitmap scaledBitmap = Bitmap.createBitmap(newSize, newSize, Config.ARGB_8888);
 

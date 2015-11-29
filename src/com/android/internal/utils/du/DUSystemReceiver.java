@@ -20,13 +20,13 @@
  * packages by overriding onExemptBroadcast(Context context, String packageName)
  */
 
-package com.android.internal.utils.eos;
+package com.android.internal.utils.du;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-public abstract class EosSystemReceiver extends BroadcastReceiver {
+public abstract class DUSystemReceiver extends BroadcastReceiver {
 
     protected abstract void onSecureReceive(Context context, Intent intent);
 

@@ -18,12 +18,12 @@
  * 
  */
 
-package com.android.internal.utils.eos;
+package com.android.internal.utils.du;
 
-import com.android.internal.utils.eos.ActionConstants.ConfigMap;
-import com.android.internal.utils.eos.ActionConstants.Defaults;
-import com.android.internal.utils.eos.Config.ActionConfig;
-import com.android.internal.utils.eos.Config.ButtonConfig;
+import com.android.internal.utils.du.ActionConstants.ConfigMap;
+import com.android.internal.utils.du.ActionConstants.Defaults;
+import com.android.internal.utils.du.Config.ActionConfig;
+import com.android.internal.utils.du.Config.ButtonConfig;
 
 public interface ActionHolder {
    public String getTag();

@@ -18,7 +18,7 @@
  *
  */
 
-package com.android.internal.utils.eos;
+package com.android.internal.utils.du;
 
 import android.app.ActivityManager;
 import android.app.ActivityManagerNative;
@@ -67,8 +67,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.android.internal.statusbar.IStatusBarService;
-//import com.android.internal.util.cm.QSUtils;
-import com.android.internal.utils.eos.Config.ActionConfig;
+import com.android.internal.utils.du.Config.ActionConfig;
 
 public class ActionHandler {
     public static String TAG = ActionHandler.class.getSimpleName();
@@ -166,13 +165,13 @@ public class ActionHandler {
             ActionConfig c = systemActions[i].create(context);
             String action = c.getAction();
             if (TextUtils.equals(action, SYSTEMUI_TASK_WIFIAP)
-                    && !EosActionUtils.deviceSupportsMobileData(context)) {
+                    && !DUActionUtils.deviceSupportsMobileData(context)) {
                 continue;
             } else if (TextUtils.equals(action, SYSTEMUI_TASK_BT)
-                    && !EosActionUtils.deviceSupportsBluetooth()) {
+                    && !DUActionUtils.deviceSupportsBluetooth()) {
                 continue;
             } else if (TextUtils.equals(action, SYSTEMUI_TASK_TORCH)
-                 && !EosActionUtils.deviceSupportsFlashLight(context)) {
+                 && !DUActionUtils.deviceSupportsFlashLight(context)) {
                 continue;
             } else if (TextUtils.equals(action, SYSTEMUI_TASK_CAMERA)
                     && context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
@@ -192,11 +191,10 @@ public class ActionHandler {
 
     private static final class StatusBarHelper {
         private static boolean isPreloaded = false;
-        private static final Object mLock = new Object();
         private static IStatusBarService mService = null;
 
         private static IStatusBarService getStatusBarService() {
-            synchronized (mLock) {
+            synchronized (StatusBarHelper.class) {
                 if (mService == null) {
                     try {
                         mService = IStatusBarService.Stub.asInterface(
@@ -288,7 +286,7 @@ public class ActionHandler {
         }
         // not a system action, should be intent
         if (!action.startsWith(SYSTEM_PREFIX)) {
-            Intent intent = EosActionUtils.getIntent(action);
+            Intent intent = DUActionUtils.getIntent(action);
             if (intent == null) {
                 return;
             }
@@ -371,8 +369,8 @@ public class ActionHandler {
 
         if (lastTask != null) {
             final ActivityOptions opts = ActivityOptions.makeCustomAnimation(context,
-                    EosActionUtils.getIdentifier(context, "last_app_in", "anim", EosActionUtils.PACKAGE_ANDROID),
-                    EosActionUtils.getIdentifier(context, "last_app_out", "anim", EosActionUtils.PACKAGE_ANDROID));
+                    DUActionUtils.getIdentifier(context, "last_app_in", "anim", DUActionUtils.PACKAGE_ANDROID),
+                    DUActionUtils.getIdentifier(context, "last_app_out", "anim", DUActionUtils.PACKAGE_ANDROID));
             am.moveTaskToFront(lastTask.id, ActivityManager.MOVE_TASK_NO_USER_ACTION,
                     opts.toBundle());
         }

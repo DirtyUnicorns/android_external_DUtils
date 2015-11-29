@@ -18,7 +18,7 @@
  * 
  */
 
-package com.android.internal.utils.eos;
+package com.android.internal.utils.du;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -38,6 +38,7 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.SystemProperties;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -49,11 +50,11 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import com.android.internal.telephony.PhoneConstants;
-import com.android.internal.utils.eos.ActionConstants.Defaults;
-import com.android.internal.utils.eos.Config.ActionConfig;
-import com.android.internal.utils.eos.Config.ButtonConfig;
+import com.android.internal.utils.du.ActionConstants.Defaults;
+import com.android.internal.utils.du.Config.ActionConfig;
+import com.android.internal.utils.du.Config.ButtonConfig;
 
-public final class EosActionUtils {
+public final class DUActionUtils {
     public static final String ANDROIDNS = "http://schemas.android.com/apk/res/android";
     public static final String PACKAGE_SYSTEMUI = "com.android.systemui";
     public static final String PACKAGE_ANDROID = "android";
@@ -97,16 +98,23 @@ public final class EosActionUtils {
                 == context.getResources().getConfiguration().orientation;
     }
 
-    public static boolean isCapKeyDevice(Context context) {
-        return !(Boolean)getValue(context, "config_showNavigationBar", BOOL, PACKAGE_ANDROID);
-    }
-
+	public static boolean hasNavbarByDefault(Context context) {
+		boolean needsNav = (Boolean)getValue(context, "config_showNavigationBar", BOOL, PACKAGE_ANDROID);
+		String navBarOverride = SystemProperties.get("qemu.hw.mainkeys");
+		if ("1".equals(navBarOverride)) {
+			needsNav = false;
+		} else if ("0".equals(navBarOverride)) {
+			needsNav = true;
+		}
+		return needsNav;
+	}
 
     public static boolean deviceSupportsLte(Context ctx) {
         final TelephonyManager tm = (TelephonyManager)
                 ctx.getSystemService(Context.TELEPHONY_SERVICE);
-        return (tm.getLteOnCdmaMode() == PhoneConstants.LTE_ON_CDMA_TRUE)
-                || tm.getLteOnGsmMode() != 0;
+//        return (tm.getLteOnCdmaMode() == PhoneConstants.LTE_ON_CDMA_TRUE)
+//                || tm.getLteOnGsmMode() != 0;
+        return tm.getLteOnCdmaMode() == PhoneConstants.LTE_ON_CDMA_TRUE;
     }
 
     public static boolean deviceSupportsDdsSupported(Context context) {
@@ -336,12 +344,12 @@ public final class EosActionUtils {
                     Resources res = getResourcesForPackage(context,
                             ActionHandler.systemActions[i].mIconPackage);
                     String iconName = ActionHandler.systemActions[i].mIconName;
-//                    if (isNavbarResource(action)) {
-//                        d = getNavbarThemedDrawable(context, res, iconName);
-//                    } else {
+                    if (isNavbarResource(action)) {
+                        d = getNavbarThemedDrawable(context, res, iconName);
+                    } else {
                         d = getDrawable(res, iconName,
                                 ActionHandler.systemActions[i].mIconPackage);
-//                    }
+                    }
                 }
             }
         } else {
