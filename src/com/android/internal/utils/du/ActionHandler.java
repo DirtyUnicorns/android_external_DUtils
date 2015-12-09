@@ -42,6 +42,7 @@ import android.hardware.input.InputManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.net.wifi.WifiManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -86,6 +87,7 @@ public class ActionHandler {
     public static final String SYSTEMUI_TASK_SCREENOFF = "task_screenoff";
     public static final String SYSTEMUI_TASK_KILL_PROCESS = "task_killcurrent";
     public static final String SYSTEMUI_TASK_ASSIST = "task_assist";
+    public static final String SYSTEMUI_TASK_GOOGLE_NOW_ON_TAP = "task_google_now_on_tap";
     public static final String SYSTEMUI_TASK_POWER_MENU = "task_powermenu";
     public static final String SYSTEMUI_TASK_TORCH = "task_torch";
     public static final String SYSTEMUI_TASK_CAMERA = "task_camera";
@@ -115,6 +117,7 @@ public class ActionHandler {
         ScreenOff(SYSTEMUI_TASK_SCREENOFF, "Turn off screen", SYSTEMUI, "ic_sysbar_power"),
         KillApp(SYSTEMUI_TASK_KILL_PROCESS, "Force close app", SYSTEMUI, "ic_sysbar_killtask"),
         Assistant(SYSTEMUI_TASK_ASSIST, "Search assistant", SYSTEMUI, "ic_sysbar_assist"),
+        GoogleNowOnTap(SYSTEMUI_TASK_GOOGLE_NOW_ON_TAP, "Google Now On Tap", SYSTEMUI, "ic_sysbar_google_now_on_tap"),
         VoiceSearch(SYSTEMUI_TASK_VOICE_SEARCH, "Voice search", SYSTEMUI, "ic_sysbar_search"),
         Flashlight(SYSTEMUI_TASK_TORCH, "Flashlight", SYSTEMUI, "ic_sysbar_torch"),
         Bluetooth(SYSTEMUI_TASK_BT, "Bluetooth", SYSTEMUI, "ic_sysbar_bt"),
@@ -149,13 +152,13 @@ public class ActionHandler {
             SystemAction.NoAction, SystemAction.SettingsPanel,
             SystemAction.NotificationPanel, SystemAction.Screenshot,
             SystemAction.ScreenOff, SystemAction.KillApp,
-            SystemAction.Assistant, SystemAction.Flashlight,
-            SystemAction.Bluetooth, SystemAction.WiFi,
-            SystemAction.Hotspot, SystemAction.LastApp,
-            SystemAction.PowerMenu, SystemAction.Overview,
-            SystemAction.Menu, SystemAction.Back,
-            SystemAction.VoiceSearch, SystemAction.Home,
-            SystemAction.ExpandedDesktop,
+            SystemAction.Assistant, SystemAction.GoogleNowOnTap,
+            SystemAction.Flashlight, SystemAction.Bluetooth,
+            SystemAction.WiFi, SystemAction.Hotspot,
+            SystemAction.LastApp, SystemAction.PowerMenu,
+            SystemAction.Overview,SystemAction.Menu,
+            SystemAction.Back, SystemAction.VoiceSearch,
+            SystemAction.Home, SystemAction.ExpandedDesktop,
             SystemAction.Screenrecord
     };
 
@@ -265,6 +268,16 @@ public class ActionHandler {
                 }
             }
         }
+
+        private static void fireGoogleNowOnTap() {
+            IStatusBarService service = getStatusBarService();
+            if (service != null) {
+                try {
+                    service.startAssist(new Bundle());
+                } catch (RemoteException e) {
+                }
+            }
+        }
     }
 
     public static void toggleRecentApps() {
@@ -308,6 +321,8 @@ public class ActionHandler {
             screenOff(context);
         } else if (action.equals(SYSTEMUI_TASK_ASSIST)) {
             launchAssistAction(context);
+        } else if (action.equals(SYSTEMUI_TASK_GOOGLE_NOW_ON_TAP)) {
+            StatusBarHelper.fireGoogleNowOnTap();
         } else if (action.equals(SYSTEMUI_TASK_POWER_MENU)) {
             showPowerMenu(context);
         } else if (action.equals(SYSTEMUI_TASK_TORCH)) {
