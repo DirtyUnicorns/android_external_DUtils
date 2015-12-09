@@ -180,11 +180,10 @@ public class ActionHandler {
                     && context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
                 continue;
             } else if (TextUtils.equals(action, SYSTEMUI_TASK_SCREENRECORD)) {
-                // if (!EosActionUtils.getBoolean(context, "config_enableScreenrecordChord",
-                // EosActionUtils.PACKAGE_ANDROID)) {
-                // continue;
-                // }
-                continue;
+                if (!DUActionUtils.getBoolean(context, "config_enableScreenrecordChord",
+                        DUActionUtils.PACKAGE_ANDROID)) {
+                    continue;
+                }
             }
             bundle.add(c);
         }
