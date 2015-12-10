@@ -471,8 +471,11 @@ public final class DUActionUtils {
 
     public static Drawable getDrawable(Resources res, String drawableName, String pkg) {
         try {
-            Drawable icon = res.getDrawable(res.getIdentifier(drawableName, DRAWABLE,
-                    pkg));
+            int resId = res.getIdentifier(drawableName, DRAWABLE, pkg);
+            Drawable icon = ImageHelper.getVector(res, resId, false);
+            if (icon == null) {
+                icon = res.getDrawable(resId);
+            }
             return icon;
         } catch (Exception e) {
             return res.getDrawable(
@@ -555,8 +558,11 @@ public final class DUActionUtils {
 
     private static Drawable getMaybeNullDrawable(Resources res, String drawableName, String pkg) {
         try {
-            Drawable icon = res.getDrawable(res.getIdentifier(drawableName, DRAWABLE,
-                    pkg));
+            int resId = res.getIdentifier(drawableName, DRAWABLE, pkg);
+            Drawable icon = ImageHelper.getVector(res, resId, false);
+            if (icon == null) {
+                icon = res.getDrawable(resId);
+            }
             return icon;
         } catch (Exception e) {
             return null;

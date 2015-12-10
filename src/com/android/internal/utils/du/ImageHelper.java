@@ -1,6 +1,7 @@
 /*
 * Copyright (C) 2013 SlimRoms Project
 * Copyright (C) 2015 TeamEos Project
+* Copyright (C) 2015-2016 The DirtyUnicorns Project
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -17,7 +18,11 @@
 
 package com.android.internal.utils.du;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapShader;
@@ -36,9 +41,14 @@ import android.graphics.Shader.TileMode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
+import android.util.Xml;
 
 public class ImageHelper {
+    private static final int VECTOR_WIDTH = 512;
+    private static final int VECTOR_HEIGHT = 512;
 
     public static Drawable getColoredDrawable(Drawable d, int color) {
         if (d == null) {
@@ -182,5 +192,55 @@ public class ImageHelper {
         canvas.drawCircle(width/2, height/2, width/2, paint);
 
         return output;
+    }
+
+    public static Drawable getVector(Resources res, int resId) {
+        return getVector(res, resId, 0, 0, false);
+    }
+
+    public static Drawable getVector(Resources res, int resId, int width, int height) {
+        return getVector(res, resId, width, height, false);
+    }
+
+    public static Drawable getVector(Resources res, int resId, boolean toBitmapDrawable) {
+        return getVector(res, resId, 0, 0, toBitmapDrawable);
+    }
+
+    public static Drawable getVector(Resources res, int resId, int width, int height,
+            boolean toBitmapDrawable) {
+        if (width <= 0) {
+            width = VECTOR_WIDTH;
+        }
+        if (height <= 0) {
+            width = VECTOR_HEIGHT;
+        }
+
+        VectorDrawable vectorDrawable = new VectorDrawable();
+        vectorDrawable.setBounds(0, 0, width, height);
+        try {
+            XmlPullParser parser = res.getXml(resId);
+            AttributeSet attrs = Xml.asAttributeSet(parser);
+
+            int type;
+            while ((type = parser.next()) != XmlPullParser.START_TAG &&
+                    type != XmlPullParser.END_DOCUMENT) {
+                // Empty loop
+            }
+
+            if (type != XmlPullParser.START_TAG) {
+//                Log.e("ImageHelper VectorLoader", "No start tag found");
+            }
+
+            vectorDrawable.inflate(res, parser, attrs);
+
+            if (!toBitmapDrawable) {
+                return vectorDrawable;
+            }
+
+            return new BitmapDrawable(res, drawableToBitmap(vectorDrawable));
+        } catch (Exception e) {
+//            Log.e("ImageHelper VectorLoader", "Error loading resource ID " + String.valueOf(resId) + " Try loading as a non vector");
+            return null;
+        }
     }
 }
