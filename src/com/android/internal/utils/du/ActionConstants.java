@@ -132,24 +132,24 @@ public class ActionConstants {
         public static final String NAVIGATION_CONFIG_DEFAULT =
                 dl(NAVBAR_DEF_BUTTONS)                                                              // default number of ButtonConfig
               + dl(BUTTON1_TAG)                                                                     // button tag
-              + dl(SystemAction.Back.mAction)       + dl(SystemAction.Back.mLabel)     + dl(EMPTY)  // single tap (PRIMARY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabel) + dl(EMPTY)  // long press (SECOND)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabel) + dl(EMPTY)  // double tap (THIRD)
+              + dl(SystemAction.Back.mAction)       + dl(SystemAction.Back.mLabelRes)     + dl(EMPTY)  // single tap (PRIMARY)
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)  // long press (SECOND)
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)  // double tap (THIRD)
 
               + dl(BUTTON2_TAG)
-              + dl(SystemAction.Home.mAction)       + dl(SystemAction.Home.mLabel)     + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabel) + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabel) + dl(EMPTY)
+              + dl(SystemAction.Home.mAction)       + dl(SystemAction.Home.mLabelRes)     + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)
 
               + dl(BUTTON3_TAG)
-              + dl(SystemAction.Overview.mAction)   + dl(SystemAction.Overview.mLabel) + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabel) + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabel) + dl(EMPTY)
+              + dl(SystemAction.Overview.mAction)   + dl(SystemAction.Overview.mLabelRes) + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)
 
               + dl(BUTTON4_TAG)
-              + dl(SystemAction.Menu.mAction)       + dl(SystemAction.Menu.mLabel)     + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabel) + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabel) + EMPTY;     // don't delimit final string
+              + dl(SystemAction.Menu.mAction)       + dl(SystemAction.Menu.mLabelRes)     + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + EMPTY;     // don't delimit final string
 
         @Override
         public String getUri() {
@@ -236,29 +236,29 @@ public class ActionConstants {
         public static final String HWKEYS_CONFIG_DEFAULT =
                 dl(HWKEY_DEF_BUTTONS)
               + dl(BACK_BUTTON_TAG)
-              + dl(SystemAction.Back.mAction)        + dl(SystemAction.Back.mLabel)         + dl(EMPTY)  // single tap (PRIMARY)
-              + dl(SystemAction.NoAction.mAction)    + dl(SystemAction.NoAction.mLabel)     + dl(EMPTY)  // long press (SECOND)
-              + dl(SystemAction.NoAction.mAction)    + dl(SystemAction.NoAction.mLabel)     + dl(EMPTY)  // double tap (THIRD)
+              + dl(SystemAction.Back.mAction)        + dl(SystemAction.Back.mLabelRes)         + dl(EMPTY)  // single tap (PRIMARY)
+              + dl(SystemAction.NoAction.mAction)    + dl(SystemAction.NoAction.mLabelRes)     + dl(EMPTY)  // long press (SECOND)
+              + dl(SystemAction.NoAction.mAction)    + dl(SystemAction.NoAction.mLabelRes)     + dl(EMPTY)  // double tap (THIRD)
 
               + dl(HOME_BUTTON_TAG)
-              + dl(SystemAction.Home.mAction)        + dl(SystemAction.Home.mLabel)         + dl(EMPTY)
-              + dl(SystemAction.Menu.mAction)        + dl(SystemAction.Menu.mLabel)         + dl(EMPTY)
-              + dl(SystemAction.Overview.mAction)    + dl(SystemAction.Overview.mLabel)         + dl(EMPTY)
+              + dl(SystemAction.Home.mAction)        + dl(SystemAction.Home.mLabelRes)         + dl(EMPTY)
+              + dl(SystemAction.Menu.mAction)        + dl(SystemAction.Menu.mLabelRes)         + dl(EMPTY)
+              + dl(SystemAction.Overview.mAction)    + dl(SystemAction.Overview.mLabelRes)         + dl(EMPTY)
 
               + dl(OVERVIEW_BUTTON_TAG)
-              + dl(SystemAction.Overview.mAction)    + dl(SystemAction.Overview.mLabel)     + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)    + dl(SystemAction.NoAction.mLabel)     + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)    + dl(SystemAction.NoAction.mLabel)     + dl(EMPTY)
+              + dl(SystemAction.Overview.mAction)    + dl(SystemAction.Overview.mLabelRes)     + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)    + dl(SystemAction.NoAction.mLabelRes)     + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)    + dl(SystemAction.NoAction.mLabelRes)     + dl(EMPTY)
 
               + dl(MENU_BUTTON_TAG)
-              + dl(SystemAction.Menu.mAction)        + dl(SystemAction.Menu.mLabel)         + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)    + dl(SystemAction.NoAction.mLabel)     + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)    + dl(SystemAction.NoAction.mLabel)     + dl(EMPTY)
+              + dl(SystemAction.Menu.mAction)        + dl(SystemAction.Menu.mLabelRes)         + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)    + dl(SystemAction.NoAction.mLabelRes)     + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)    + dl(SystemAction.NoAction.mLabelRes)     + dl(EMPTY)
 
               + dl(ASSIST_BUTTON_TAG)
-              + dl(SystemAction.Assistant.mAction)   + dl(SystemAction.Assistant.mLabel)    + dl(EMPTY)
-              + dl(SystemAction.VoiceSearch.mAction) + dl(SystemAction.VoiceSearch.mLabel)  + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)    + dl(SystemAction.NoAction.mLabel)     + EMPTY;
+              + dl(SystemAction.Assistant.mAction)   + dl(SystemAction.Assistant.mLabelRes)    + dl(EMPTY)
+              + dl(SystemAction.VoiceSearch.mAction) + dl(SystemAction.VoiceSearch.mLabelRes)  + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)    + dl(SystemAction.NoAction.mLabelRes)     + EMPTY;
 
         @Override
         public int getConfigType() {
@@ -386,24 +386,24 @@ public class ActionConstants {
         public static final String FLING_CONFIG_DEFAULT =
                 dl(FLING_DEF_BUTTONS)
               + dl(RIGHT_TAP_TAG)
-              + dl(SystemAction.Home.mAction)         + dl(SystemAction.Home.mLabel)        + dl(EMPTY)  // short tap
-              + dl(SystemAction.Menu.mAction)         + dl(SystemAction.Menu.mLabel)        + dl(EMPTY)  // long press
-              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabel)    + dl(EMPTY)  // double tap
+              + dl(SystemAction.Home.mAction)         + dl(SystemAction.Home.mLabelRes)        + dl(EMPTY)  // short tap
+              + dl(SystemAction.Menu.mAction)         + dl(SystemAction.Menu.mLabelRes)        + dl(EMPTY)  // long press
+              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // double tap
 
               + dl(LEFT_TAP_TAG)
-              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabel)    + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabel)    + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabel)    + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)
 
               + dl(RIGHT_FLING_TAG)
-              + dl(SystemAction.Overview.mAction)     + dl(SystemAction.Overview.mLabel)    + dl(EMPTY)  // short fling
-              + dl(SystemAction.Assistant.mAction)    + dl(SystemAction.Assistant.mLabel)   + dl(EMPTY)  // long fling
-              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabel)    + dl(EMPTY)  // super fling?
+              + dl(SystemAction.Overview.mAction)     + dl(SystemAction.Overview.mLabelRes)    + dl(EMPTY)  // short fling
+              + dl(SystemAction.Assistant.mAction)    + dl(SystemAction.Assistant.mLabelRes)   + dl(EMPTY)  // long fling
+              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // super fling?
 
               + dl(LEFT_FLING)
-              + dl(SystemAction.Back.mAction)         + dl(SystemAction.Back.mLabel)        + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabel)    + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabel)    + EMPTY;
+              + dl(SystemAction.Back.mAction)         + dl(SystemAction.Back.mLabelRes)        + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + EMPTY;
 
         @Override
         public int getConfigType() {
@@ -465,19 +465,19 @@ public class ActionConstants {
         public static final String PIE_PRIMARY_CONFIG_DEFAULT =
                 dl(PIE_PRIMARY_DEF_BUTTONS)
               + dl(PIE_BACK_BUTTON_TAG)
-              + dl(SystemAction.Back.mAction)       + dl(SystemAction.Back.mLabel)     + dl(EMPTY)  // single tap (PRIMARY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabel) + dl(EMPTY)  // long press (SECOND)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabel) + dl(EMPTY)  // double tap (NO-OP on Pie)
+              + dl(SystemAction.Back.mAction)       + dl(SystemAction.Back.mLabelRes)     + dl(EMPTY)  // single tap (PRIMARY)
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)  // long press (SECOND)
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)  // double tap (NO-OP on Pie)
 
               + dl(PIE_HOME_BUTTON_TAG)
-              + dl(SystemAction.Home.mAction)       + dl(SystemAction.Home.mLabel)     + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabel) + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabel) + dl(EMPTY)
+              + dl(SystemAction.Home.mAction)       + dl(SystemAction.Home.mLabelRes)     + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)
 
               + dl(PIE_OVERVIEW_BUTTON_TAG)
-              + dl(SystemAction.Overview.mAction)   + dl(SystemAction.Overview.mLabel) + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabel) + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabel) + EMPTY;  // don't delimit final string
+              + dl(SystemAction.Overview.mAction)   + dl(SystemAction.Overview.mLabelRes) + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + EMPTY;  // don't delimit final string
 
 
         @Override
@@ -562,29 +562,29 @@ public class ActionConstants {
         public static final String PIE_SECOND_CONFIG_DEFAULT =
                 dl(PIE_SECOND_DEF_BUTTONS)
               + dl(PIE_BUTTON1_TAG)
-              + dl(SystemAction.PowerMenu.mAction)          + dl(SystemAction.PowerMenu.mLabel)           + dl(EMPTY)  // single tap (PRIMARY)
-              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabel)            + dl(EMPTY)  // long press (SECOND)
-              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabel)            + dl(EMPTY)  // double tap (NO-OP on Pie)
+              + dl(SystemAction.PowerMenu.mAction)          + dl(SystemAction.PowerMenu.mLabelRes)           + dl(EMPTY)  // single tap (PRIMARY)
+              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabelRes)            + dl(EMPTY)  // long press (SECOND)
+              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabelRes)            + dl(EMPTY)  // double tap (NO-OP on Pie)
 
               + dl(PIE_BUTTON2_TAG)
-              + dl(SystemAction.NotificationPanel.mAction)  + dl(SystemAction.NotificationPanel.mLabel)   + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabel)            + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabel)            + dl(EMPTY)
+              + dl(SystemAction.NotificationPanel.mAction)  + dl(SystemAction.NotificationPanel.mLabelRes)   + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabelRes)            + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabelRes)            + dl(EMPTY)
 
               + dl(PIE_BUTTON3_TAG)
-              + dl(SystemAction.Assistant.mAction)          + dl(SystemAction.Assistant.mLabel)           + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabel)            + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabel)            + dl(EMPTY)
+              + dl(SystemAction.Assistant.mAction)          + dl(SystemAction.Assistant.mLabelRes)           + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabelRes)            + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabelRes)            + dl(EMPTY)
 
               + dl(PIE_BUTTON4_TAG)
-              + dl(SystemAction.Screenshot.mAction)         + dl(SystemAction.Screenshot.mLabel)          + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabel)            + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabel)            + dl(EMPTY)
+              + dl(SystemAction.Screenshot.mAction)         + dl(SystemAction.Screenshot.mLabelRes)          + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabelRes)            + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabelRes)            + dl(EMPTY)
 
               + dl(PIE_BUTTON5_TAG)
-              + dl(SystemAction.LastApp.mAction)            + dl(SystemAction.LastApp.mLabel)             + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabel)            + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabel)            + EMPTY;
+              + dl(SystemAction.LastApp.mAction)            + dl(SystemAction.LastApp.mLabelRes)             + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabelRes)            + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabelRes)            + EMPTY;
 
         @Override
         public int getConfigType() {

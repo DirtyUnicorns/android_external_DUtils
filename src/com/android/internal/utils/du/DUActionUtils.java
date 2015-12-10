@@ -298,7 +298,7 @@ public final class DUActionUtils {
                 if (task.startsWith(ActionHandler.SYSTEM_PREFIX)) {
                     continue;
                 }
-                String resolvedName = getFriendlyNameForUri(pm, task);
+                String resolvedName = getFriendlyNameForUri(ctx, task);
                 if (resolvedName == null || TextUtils.equals(resolvedName, task)) {
                     // if resolved name is null or the full raw intent string is
                     // returned, we were unable to resolve
@@ -342,13 +342,13 @@ public final class DUActionUtils {
             for (int i = 0; i < ActionHandler.systemActions.length; i++) {
                 if (ActionHandler.systemActions[i].mAction.equals(action)) {
                     Resources res = getResourcesForPackage(context,
-                            ActionHandler.systemActions[i].mIconPackage);
-                    String iconName = ActionHandler.systemActions[i].mIconName;
+                            ActionHandler.systemActions[i].mResPackage);
+                    String iconName = ActionHandler.systemActions[i].mIconRes;
                     if (isNavbarResource(action)) {
                         d = getNavbarThemedDrawable(context, res, iconName);
                     } else {
                         d = getDrawable(res, iconName,
-                                ActionHandler.systemActions[i].mIconPackage);
+                                ActionHandler.systemActions[i].mResPackage);
                     }
                 }
             }
@@ -518,23 +518,24 @@ public final class DUActionUtils {
         return name != null ? name : intent.toUri(0);
     }
 
-    public static String getFriendlyNameForUri(PackageManager pm, String uri) {
+    public static String getFriendlyNameForUri(Context ctx, String uri) {
         if (uri == null) {
             return null;
         }
         if (uri.startsWith(ActionHandler.SYSTEM_PREFIX)) {
             for (int i = 0; i < ActionHandler.systemActions.length; i++) {
                 if (ActionHandler.systemActions[i].mAction.equals(uri)) {
-                    return ActionHandler.systemActions[i].mLabel;
+                    return getString(ctx, ActionHandler.systemActions[i].mLabelRes,
+                            ActionHandler.systemActions[i].mResPackage);
                 }
             }
         } else {
             try {
                 Intent intent = Intent.parseUri(uri, 0);
                 if (Intent.ACTION_MAIN.equals(intent.getAction())) {
-                    return getFriendlyActivityName(pm, intent, false);
+                    return getFriendlyActivityName(ctx.getPackageManager(), intent, false);
                 }
-                return getFriendlyShortcutName(pm, intent);
+                return getFriendlyShortcutName(ctx.getPackageManager(), intent);
             } catch (URISyntaxException e) {
             }
         }

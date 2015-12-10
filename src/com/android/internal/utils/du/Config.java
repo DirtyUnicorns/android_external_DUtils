@@ -251,7 +251,7 @@ public class Config {
 
         public ActionConfig(Context ctx, String action) {
             this.action = action;
-            this.label = DUActionUtils.getFriendlyNameForUri(ctx.getPackageManager(), action);
+            this.label = DUActionUtils.getFriendlyNameForUri(ctx, action);
         }
 
         public String getAction() {

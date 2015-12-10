@@ -108,38 +108,38 @@ public class ActionHandler {
     public static final String INTENT_TOGGLE_FLASHLIGHT = "action_handler_toggle_flashlight";
 
     static enum SystemAction {
-        NoAction(SYSTEMUI_TASK_NO_ACTION, "No action", SYSTEMUI, "ic_sysbar_null"),
-        SettingsPanel(SYSTEMUI_TASK_SETTINGS_PANEL, "Settings panel", SYSTEMUI, "ic_sysbar_qs"),
-        NotificationPanel(SYSTEMUI_TASK_NOTIFICATION_PANEL, "Notification panel", SYSTEMUI, "ic_sysbar_notifications"),
-        Screenshot(SYSTEMUI_TASK_SCREENSHOT, "Screenshot", SYSTEMUI, "ic_sysbar_screenshot"),
-        Screenrecord(SYSTEMUI_TASK_SCREENRECORD, "Record screen", SYSTEMUI, "ic_sysbar_record_screen"),
-        ExpandedDesktop(SYSTEMUI_TASK_EXPANDED_DESKTOP, "Expanded desktop", SYSTEMUI, "ic_sysbar_expanded_desktop"),
-        ScreenOff(SYSTEMUI_TASK_SCREENOFF, "Turn off screen", SYSTEMUI, "ic_sysbar_power"),
-        KillApp(SYSTEMUI_TASK_KILL_PROCESS, "Force close app", SYSTEMUI, "ic_sysbar_killtask"),
-        Assistant(SYSTEMUI_TASK_ASSIST, "Search assistant", SYSTEMUI, "ic_sysbar_assist"),
-        GoogleNowOnTap(SYSTEMUI_TASK_GOOGLE_NOW_ON_TAP, "Google Now On Tap", SYSTEMUI, "ic_sysbar_google_now_on_tap"),
-        VoiceSearch(SYSTEMUI_TASK_VOICE_SEARCH, "Voice search", SYSTEMUI, "ic_sysbar_search"),
-        Flashlight(SYSTEMUI_TASK_TORCH, "Flashlight", SYSTEMUI, "ic_sysbar_torch"),
-        Bluetooth(SYSTEMUI_TASK_BT, "Bluetooth", SYSTEMUI, "ic_sysbar_bt"),
-        WiFi(SYSTEMUI_TASK_WIFI, "WiFi", SYSTEMUI, "ic_sysbar_wifi"),
-        Hotspot(SYSTEMUI_TASK_WIFIAP, "Hotspot", SYSTEMUI, "ic_qs_wifi_ap_on"),
-        LastApp(SYSTEMUI_TASK_LAST_APP, "Last app", SYSTEMUI, "ic_sysbar_lastapp"),
-        Overview(SYSTEMUI_TASK_RECENTS, "Overview", SYSTEMUI, "ic_sysbar_recent"),
-        PowerMenu(SYSTEMUI_TASK_POWER_MENU, "Power menu", SYSTEMUI, "ic_sysbar_power_menu"),
-        Menu(SYSTEMUI_TASK_MENU, "Menu", SYSTEMUI, "ic_sysbar_menu"),
-        Back(SYSTEMUI_TASK_BACK, "Back", SYSTEMUI, "ic_sysbar_back"),
-        Home(SYSTEMUI_TASK_HOME, "Home", SYSTEMUI, "ic_sysbar_home");
+        NoAction(SYSTEMUI_TASK_NO_ACTION,  SYSTEMUI, "label_action_no_action", "ic_sysbar_null"),
+        SettingsPanel(SYSTEMUI_TASK_SETTINGS_PANEL, SYSTEMUI, "label_action_settings_panel", "ic_sysbar_qs"),
+        NotificationPanel(SYSTEMUI_TASK_NOTIFICATION_PANEL, SYSTEMUI, "label_action_notification_panel", "ic_sysbar_notifications"),
+        Screenshot(SYSTEMUI_TASK_SCREENSHOT, SYSTEMUI, "label_action_screenshot", "ic_sysbar_screenshot"),
+        Screenrecord(SYSTEMUI_TASK_SCREENRECORD, SYSTEMUI, "label_action_screenrecord", "ic_sysbar_record_screen"),
+        ExpandedDesktop(SYSTEMUI_TASK_EXPANDED_DESKTOP, SYSTEMUI, "label_action_expanded_desktop", "ic_sysbar_expanded_desktop"),
+        ScreenOff(SYSTEMUI_TASK_SCREENOFF, SYSTEMUI, "label_action_screen_off", "ic_sysbar_power"),
+        KillApp(SYSTEMUI_TASK_KILL_PROCESS, SYSTEMUI, "label_action_force_close_app", "ic_sysbar_killtask"),
+        Assistant(SYSTEMUI_TASK_ASSIST, SYSTEMUI, "label_action_search_assistant", "ic_sysbar_assist"),
+        GoogleNowOnTap(SYSTEMUI_TASK_GOOGLE_NOW_ON_TAP, SYSTEMUI, "label_action_google_now_on_tap", "ic_sysbar_google_now_on_tap"),
+        VoiceSearch(SYSTEMUI_TASK_VOICE_SEARCH, SYSTEMUI, "label_action_voice_search", "ic_sysbar_search"),
+        Flashlight(SYSTEMUI_TASK_TORCH, SYSTEMUI, "label_action_flashlight", "ic_sysbar_torch"),
+        Bluetooth(SYSTEMUI_TASK_BT, SYSTEMUI, "label_action_bluetooth", "ic_sysbar_bt"),
+        WiFi(SYSTEMUI_TASK_WIFI, SYSTEMUI, "label_action_wifi", "ic_sysbar_wifi"),
+        Hotspot(SYSTEMUI_TASK_WIFIAP, SYSTEMUI, "label_action_hotspot", "ic_qs_wifi_ap_on"),
+        LastApp(SYSTEMUI_TASK_LAST_APP, SYSTEMUI, "label_action_last_app", "ic_sysbar_lastapp"),
+        Overview(SYSTEMUI_TASK_RECENTS, SYSTEMUI, "label_action_overview", "ic_sysbar_recent"),
+        PowerMenu(SYSTEMUI_TASK_POWER_MENU, SYSTEMUI, "label_action_power_menu", "ic_sysbar_power_menu"),
+        Menu(SYSTEMUI_TASK_MENU, SYSTEMUI, "label_action_menu", "ic_sysbar_menu"),
+        Back(SYSTEMUI_TASK_BACK, SYSTEMUI, "label_action_back", "ic_sysbar_back"),
+        Home(SYSTEMUI_TASK_HOME, SYSTEMUI, "label_action_home", "ic_sysbar_home");
 
         String mAction;
-        String mLabel;
-        String mIconPackage;
-        String mIconName;
+        String mResPackage;
+        String mLabelRes;
+        String mIconRes;
 
-        private SystemAction(String action, String label, String iconPackage, String iconName) {
+        private SystemAction(String action, String resPackage, String labelRes,  String iconRes) {
             mAction = action;
-            mLabel = label;
-            mIconPackage = iconPackage;
-            mIconName = iconName;
+            mResPackage = resPackage;
+            mLabelRes = labelRes;
+            mIconRes = iconRes;
         }
 
         private ActionConfig create(Context ctx) {
