@@ -602,6 +602,9 @@ public final class DUActionUtils {
                 d = getDrawable(defRes, drawableName, PACKAGE_SYSTEMUI);
             }
         }
+        if (d == null) {
+            d = getDrawable(defRes, drawableName, PACKAGE_SYSTEMUI);
+        }
         return d;
     }
 
