@@ -41,6 +41,8 @@ import com.android.internal.utils.du.ActionConstants.Defaults;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -155,7 +157,7 @@ public class Config {
         return s.substring(0, s.length() - 1);
     }
 
-    public static class ButtonConfig implements Stringable {
+    public static class ButtonConfig implements Stringable, Parcelable {
         public static final int NUM_ELEMENTS = 10;
         protected ActionConfig[] configs = new ActionConfig[3];
         private String tag = ActionConstants.EMPTY;
@@ -226,9 +228,42 @@ public class Config {
             config.fromList(ctx, buttons.subList(7, 10));
             configs[ActionConfig.THIRD] = config;
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(tag);
+            dest.writeParcelable(configs[ActionConfig.PRIMARY], flags);
+            dest.writeParcelable(configs[ActionConfig.SECOND], flags);
+            dest.writeParcelable(configs[ActionConfig.THIRD], flags);
+        }
+
+        public static final Parcelable.Creator<ButtonConfig> CREATOR = new Parcelable.Creator<ButtonConfig>() {
+            public ButtonConfig createFromParcel(Parcel in) {
+                return new ButtonConfig(in);
+            }
+
+            public ButtonConfig[] newArray(int size) {
+                return new ButtonConfig[size];
+            }
+        };
+
+        private ButtonConfig(Parcel in) {
+            tag = in.readString();
+            configs[ActionConfig.PRIMARY] = (ActionConfig) in.readParcelable(Config.ActionConfig.class
+                    .getClassLoader());
+            configs[ActionConfig.SECOND] = (ActionConfig) in.readParcelable(Config.ActionConfig.class
+                    .getClassLoader());
+            configs[ActionConfig.THIRD] = (ActionConfig) in.readParcelable(Config.ActionConfig.class
+                    .getClassLoader());
+        }
     }
 
-    public static class ActionConfig implements Stringable, Comparable<ActionConfig> {
+    public static class ActionConfig implements Stringable, Comparable<ActionConfig>, Parcelable {
         public static final int PRIMARY = 0;
         public static final int SECOND = 1;
         public static final int THIRD = 2;
@@ -238,7 +273,7 @@ public class Config {
         private String iconUri = ActionConstants.EMPTY;
 
         // internal use only
-        private ActionConfig() {            
+        private ActionConfig() {
         }
 
         public static ActionConfig create(Context ctx) {
@@ -328,6 +363,34 @@ public class Config {
             action = items.get(0);
             label = DUActionUtils.getFriendlyNameForUri(ctx, action);
             iconUri = items.get(2);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(action);
+            dest.writeString(label);
+            dest.writeString(iconUri);
+        }
+
+        public static final Parcelable.Creator<ActionConfig> CREATOR = new Parcelable.Creator<ActionConfig>() {
+            public ActionConfig createFromParcel(Parcel in) {
+                return new ActionConfig(in);
+            }
+
+            public ActionConfig[] newArray(int size) {
+                return new ActionConfig[size];
+            }
+        };
+
+        private ActionConfig(Parcel in) {
+            action = in.readString();
+            label = in.readString();
+            iconUri = in.readString();
         }
     }
 }
