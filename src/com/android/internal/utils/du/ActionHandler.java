@@ -32,15 +32,12 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
-//import android.hardware.ITorchService;
 import android.hardware.input.InputManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
+import android.media.session.MediaSessionLegacyHelper;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -60,9 +57,8 @@ import android.view.InputDevice;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.WindowManagerPolicyControl;
-//import android.view.WindowManagerPolicyControl;
+import android.view.inputmethod.InputMethodManager;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -75,6 +71,11 @@ public class ActionHandler {
 
     public static final String SYSTEM_PREFIX = "task";
     public static final String SYSTEMUI = "com.android.systemui";
+
+    // track and filter special actions
+    public static final String TASK_IME = "task_ime";
+    public static final String TASK_MEDIA = "task_media";
+    public static final String TASK_SOUNDMODE = "task_soundmode";
 
     public static final String SYSTEMUI_TASK_NO_ACTION = "task_no_action";
     public static final String SYSTEMUI_TASK_SETTINGS_PANEL = "task_settings_panel";
@@ -101,6 +102,18 @@ public class ActionHandler {
     public static final String SYSTEMUI_TASK_MENU = "task_menu";
     public static final String SYSTEMUI_TASK_BACK = "task_back";
     public static final String SYSTEMUI_TASK_HOME = "task_home";
+    public static final String SYSTEMUI_TASK_IME_SWITCHER = "task_ime_switcher";
+    public static final String SYSTEMUI_TASK_IME_NAVIGATION_LEFT = "task_ime_navigation_left";
+    public static final String SYSTEMUI_TASK_IME_NAVIGATION_RIGHT = "task_ime_navigation_right";
+    public static final String SYSTEMUI_TASK_IME_NAVIGATION_UP = "task_ime_navigation_up";
+    public static final String SYSTEMUI_TASK_IME_NAVIGATION_DOWN = "task_ime_navigation_down";
+    public static final String SYSTEMUI_TASK_MEDIA_PREVIOUS = "task_media_previous";
+    public static final String SYSTEMUI_TASK_MEDIA_NEXT = "task_media_next";
+    public static final String SYSTEMUI_TASK_MEDIA_PLAY_PAUSE = "task_media_play_pause";
+    public static final String SYSTEMUI_TASK_SOUNDMODE_VIB = "task_soundmode_vib";
+    public static final String SYSTEMUI_TASK_SOUNDMODE_SILENT = "task_soundmode_silent";
+    public static final String SYSTEMUI_TASK_SOUNDMODE_VIB_SILENT = "task_soundmode_vib_silent";
+    public static final String SYSTEMUI_TASK_WAKE_DEVICE = "task_wake_device";
 
     public static final String INTENT_SHOW_POWER_MENU = "action_handler_show_power_menu";
     public static final String INTENT_TOGGLE_SCREENRECORD = "action_handler_toggle_screenrecord";
@@ -143,8 +156,7 @@ public class ActionHandler {
         }
 
         private ActionConfig create(Context ctx) {
-            ActionConfig a = new ActionConfig(ctx, mAction, mAction);
-            return a;
+            return new ActionConfig(ctx, mAction, mAction);
         }
     }
 
@@ -277,6 +289,16 @@ public class ActionHandler {
                 }
             }
         }
+
+        private static void fireIntentAfterKeyguard(Intent intent) {
+            IStatusBarService service = getStatusBarService();
+            if (service != null) {
+                try {
+                    service.showCustomIntentAfterKeyguard(intent);
+                } catch (RemoteException e) {
+                }
+            }
+        }
     }
 
     public static void toggleRecentApps() {
@@ -289,6 +311,23 @@ public class ActionHandler {
 
     public static void preloadRecentApps() {
         StatusBarHelper.preloadRecentApps();
+    }
+
+    public static void performTaskFromKeyguard(Context ctx, String action) {
+        // null: throw it out
+        if (action == null) {
+            return;
+        }
+        // not a system action, should be intent
+        if (!action.startsWith(SYSTEM_PREFIX)) {
+            Intent intent = DUActionUtils.getIntent(action);
+            if (intent == null) {
+                return;
+            }
+            StatusBarHelper.fireIntentAfterKeyguard(intent);
+        } else {
+            performTask(ctx, action);
+        }
     }
 
     public static void performTask(Context context, String action) {
@@ -308,50 +347,162 @@ public class ActionHandler {
             return;
         } else if (action.equals(SYSTEMUI_TASK_KILL_PROCESS)) {
             killProcess(context);
+            return;
         } else if (action.equals(SYSTEMUI_TASK_SCREENSHOT)) {
             takeScreenshot(context);
+            return;
         } else if (action.equals(SYSTEMUI_TASK_SCREENRECORD)) {
             takeScreenrecord(context);
+            return;
             // } else if (action.equals(SYSTEMUI_TASK_AUDIORECORD)) {
             // takeAudiorecord();
         } else if (action.equals(SYSTEMUI_TASK_EXPANDED_DESKTOP)) {
             toggleExpandedDesktop(context);
+            return;
         } else if (action.equals(SYSTEMUI_TASK_SCREENOFF)) {
             screenOff(context);
+            return;
+        } else if (action.equals(SYSTEMUI_TASK_WAKE_DEVICE)) {
+            PowerManager powerManager =
+                    (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            if (!powerManager.isScreenOn()) {
+                powerManager.wakeUp(SystemClock.uptimeMillis());
+            }
+            return;
         } else if (action.equals(SYSTEMUI_TASK_ASSIST)) {
             launchAssistAction(context);
+            return;
         } else if (action.equals(SYSTEMUI_TASK_GOOGLE_NOW_ON_TAP)) {
             StatusBarHelper.fireGoogleNowOnTap();
+            return;
         } else if (action.equals(SYSTEMUI_TASK_POWER_MENU)) {
             showPowerMenu(context);
+            return;
         } else if (action.equals(SYSTEMUI_TASK_TORCH)) {
             toggleTorch(context);
+            return;
         } else if (action.equals(SYSTEMUI_TASK_CAMERA)) {
             launchCamera(context);
+            return;
         } else if (action.equals(SYSTEMUI_TASK_WIFI)) {
             toggleWifi(context);
+            return;
         } else if (action.equals(SYSTEMUI_TASK_WIFIAP)) {
             toggleWifiAP(context);
+            return;
         } else if (action.equals(SYSTEMUI_TASK_BT)) {
             toggleBluetooth();
+            return;
         } else if (action.equals(SYSTEMUI_TASK_RECENTS)) {
             toggleRecentApps();
+            return;
         } else if (action.equals(SYSTEMUI_TASK_LAST_APP)) {
             switchToLastApp(context);
+            return;
         } else if (action.equals(SYSTEMUI_TASK_SETTINGS_PANEL)) {
             StatusBarHelper.expandSettingsPanel();
+            return;
         } else if (action.equals(SYSTEMUI_TASK_NOTIFICATION_PANEL)) {
             StatusBarHelper.expandNotificationPanel();
+            return;
         } else if (action.equals(SYSTEMUI_TASK_VOICE_SEARCH)) {
             launchVoiceSearch(context);
+            return;
         } else if (action.equals(SYSTEMUI_TASK_APP_SEARCH)) {
             triggerVirtualKeypress(context, KeyEvent.KEYCODE_SEARCH);
+            return;
         } else if (action.equals(SYSTEMUI_TASK_MENU)) {
             triggerVirtualKeypress(context, KeyEvent.KEYCODE_MENU);
+            return;
         } else if (action.equals(SYSTEMUI_TASK_BACK)) {
             triggerVirtualKeypress(context, KeyEvent.KEYCODE_BACK);
+            return;
         } else if (action.equals(SYSTEMUI_TASK_HOME)) {
             triggerVirtualKeypress(context, KeyEvent.KEYCODE_HOME);
+            return;
+        } else if (action.equals(SYSTEMUI_TASK_IME_NAVIGATION_LEFT)) {
+            triggerVirtualKeypress(context, KeyEvent.KEYCODE_DPAD_LEFT);
+            return;
+        } else if (action.equals(SYSTEMUI_TASK_IME_SWITCHER)) {
+            ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE))
+                    .showInputMethodPicker(true /* showAuxiliarySubtypes */);
+            return;
+        } else if (action.equals(SYSTEMUI_TASK_IME_NAVIGATION_RIGHT)) {
+            triggerVirtualKeypress(context, KeyEvent.KEYCODE_DPAD_RIGHT);
+            return;
+        } else if (action.equals(SYSTEMUI_TASK_IME_NAVIGATION_UP)) {
+            triggerVirtualKeypress(context, KeyEvent.KEYCODE_DPAD_UP);
+            return;
+        } else if (action.equals(SYSTEMUI_TASK_IME_NAVIGATION_DOWN)) {
+            triggerVirtualKeypress(context, KeyEvent.KEYCODE_DPAD_DOWN);
+            return;
+        } else if (action.equals(SYSTEMUI_TASK_MEDIA_PREVIOUS)) {
+            dispatchMediaKeyWithWakeLock(KeyEvent.KEYCODE_MEDIA_PREVIOUS, context);
+            return;
+        } else if (action.equals(SYSTEMUI_TASK_MEDIA_NEXT)) {
+            dispatchMediaKeyWithWakeLock(KeyEvent.KEYCODE_MEDIA_NEXT, context);
+            return;
+        } else if (action.equals(SYSTEMUI_TASK_MEDIA_PLAY_PAUSE)) {
+            dispatchMediaKeyWithWakeLock(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, context);
+            return;
+        } else if (action.equals(SYSTEMUI_TASK_SOUNDMODE_VIB)) {
+            AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+            if (am != null && ActivityManagerNative.isSystemReady()) {
+                if (am.getRingerMode() != AudioManager.RINGER_MODE_VIBRATE) {
+                    am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                    Vibrator vib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                    if (vib != null) {
+                        vib.vibrate(50);
+                    }
+                } else {
+                    am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                    ToneGenerator tg = new ToneGenerator(
+                            AudioManager.STREAM_NOTIFICATION,
+                            (int) (ToneGenerator.MAX_VOLUME * 0.85));
+                    if (tg != null) {
+                        tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+                    }
+                }
+            }
+            return;
+        } else if (action.equals(SYSTEMUI_TASK_SOUNDMODE_SILENT)) {
+            AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+            if (am != null && ActivityManagerNative.isSystemReady()) {
+                if (am.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+                    am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                } else {
+                    am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                    ToneGenerator tg = new ToneGenerator(
+                            AudioManager.STREAM_NOTIFICATION,
+                            (int) (ToneGenerator.MAX_VOLUME * 0.85));
+                    if (tg != null) {
+                        tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+                    }
+                }
+            }
+            return;
+        } else if (action.equals(SYSTEMUI_TASK_SOUNDMODE_VIB_SILENT)) {
+            AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+            if (am != null && ActivityManagerNative.isSystemReady()) {
+                if (am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
+                    am.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+                    Vibrator vib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+                    if (vib != null) {
+                        vib.vibrate(50);
+                    }
+                } else if (am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE) {
+                    am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                } else {
+                    am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                    ToneGenerator tg = new ToneGenerator(
+                            AudioManager.STREAM_NOTIFICATION,
+                            (int) (ToneGenerator.MAX_VOLUME * 0.85));
+                    if (tg != null) {
+                        tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+                    }
+                }
+            }
+            return;
         }
     }
 
@@ -458,13 +609,33 @@ public class ActionHandler {
         }
     }
 
+    private static void dispatchMediaKeyWithWakeLock(int keycode, Context context) {
+        if (ActivityManagerNative.isSystemReady()) {
+            KeyEvent event = new KeyEvent(SystemClock.uptimeMillis(),
+                    SystemClock.uptimeMillis(), KeyEvent.ACTION_DOWN, keycode, 0);
+            MediaSessionLegacyHelper.getHelper(context).sendMediaButtonEvent(event, true);
+            event = KeyEvent.changeAction(event, KeyEvent.ACTION_UP);
+            MediaSessionLegacyHelper.getHelper(context).sendMediaButtonEvent(event, true);
+        }
+    }
+
     private static void triggerVirtualKeypress(Context context, final int keyCode) {
         final InputManager im = InputManager.getInstance();
         final long now = SystemClock.uptimeMillis();
+        int downflags = 0;
+
+        if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT
+                || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT
+                || keyCode == KeyEvent.KEYCODE_DPAD_UP
+                || keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+            downflags = KeyEvent.FLAG_SOFT_KEYBOARD | KeyEvent.FLAG_KEEP_TOUCH_MODE;
+        } else {
+            downflags = KeyEvent.FLAG_FROM_SYSTEM;
+        }
 
         final KeyEvent downEvent = new KeyEvent(now, now, KeyEvent.ACTION_DOWN,
                 keyCode, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
-                KeyEvent.FLAG_FROM_SYSTEM, InputDevice.SOURCE_KEYBOARD);
+                downflags, InputDevice.SOURCE_KEYBOARD);
         final KeyEvent upEvent = KeyEvent.changeAction(downEvent, KeyEvent.ACTION_UP);
         final Handler handler = new Handler(Looper.getMainLooper());
 

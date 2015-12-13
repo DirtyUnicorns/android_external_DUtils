@@ -54,21 +54,21 @@ public class ActionConstants {
 
     public static final String ACTION_DELIMITER = "|";
     public static final String EMPTY = "empty";
-    public static final int NAVBAR = 1;
+    public static final int SMARTBAR = 1;
     public static final int HWKEYS = 2;
     public static final int FLING = 3;
     public static final int PIE_PRIMARY = 4;
     public static final int PIE_SECONDARY = 5;
 
-    private static final Navbar navbar = new Navbar();
+    private static final Smartbar smartbar = new Smartbar();
     private static final Hwkeys hwkeys = new Hwkeys();
     private static final Fling fling = new Fling();
     private static final PiePrimary pie_primary = new PiePrimary();
     private static final PieSecond pie_second = new PieSecond();
 
     public static Defaults getDefaults(int type) {
-        if (type == NAVBAR) {
-            return navbar;
+        if (type == SMARTBAR) {
+            return smartbar;
         } else if (type == HWKEYS) {
             return hwkeys;
         } else if (type == FLING) {
@@ -86,31 +86,31 @@ public class ActionConstants {
         return s + ACTION_DELIMITER;
     }
 
-    public static class Navbar implements Defaults {
-        public static final int NAVBAR_MAX_BUTTONS = 7;
-        public static final String NAVBAR_DEF_BUTTONS = "4";
-        public static final String BUTTON1_TAG = "navbar_button_1";
-        public static final String BUTTON2_TAG = "navbar_button_2";
-        public static final String BUTTON3_TAG = "navbar_button_3";
-        public static final String BUTTON4_TAG = "navbar_button_4";
-        public static final String BUTTON5_TAG = "navbar_button_5";
-        public static final String BUTTON6_TAG = "navbar_button_6";
-        public static final String BUTTON7_TAG = "navbar_button_7";
+    public static class Smartbar implements Defaults {
+        public static final int SMARTBAR_MAX_BUTTONS = 7;
+        public static final String SMARTBAR_DEF_BUTTONS = "4";
+        public static final String BUTTON1_TAG = "smartbar_button_1";
+        public static final String BUTTON2_TAG = "smartbar_button_2";
+        public static final String BUTTON3_TAG = "smartbar_button_3";
+        public static final String BUTTON4_TAG = "smartbar_button_4";
+        public static final String BUTTON5_TAG = "smartbar_button_5";
+        public static final String BUTTON6_TAG = "smartbar_button_6";
+        public static final String BUTTON7_TAG = "smartbar_button_7";
 
-        public static final String BACK_BUTTON_SINGLE_TAP_TAG = "navbar_button_back_single_tap";
-        public static final String HOME_BUTTON_SINGLE_TAP_TAG = "navbar_button_home_single_tap";
-        public static final String OVERVIEW_BUTTON_SINGLE_TAP_TAG = "navbar_button_overview_single_tap";
-        public static final String MENU_BUTTON_SINGLE_TAP_TAG = "navbar_button_menu_single_tap";
+        public static final String BACK_BUTTON_SINGLE_TAP_TAG = "smartbar_button_back_single_tap";
+        public static final String HOME_BUTTON_SINGLE_TAP_TAG = "smartbar_button_home_single_tap";
+        public static final String OVERVIEW_BUTTON_SINGLE_TAP_TAG = "smartbar_button_overview_single_tap";
+        public static final String MENU_BUTTON_SINGLE_TAP_TAG = "smartbar_button_menu_single_tap";
 
-        public static final String BACK_BUTTON_LONG_PRESS_TAG = "navbar_button_back_long_press";
-        public static final String HOME_BUTTON_LONG_PRESS_TAG = "navbar_button_home_long_press";
-        public static final String OVERVIEW_BUTTON_LONG_PRESS_TAG = "navbar_button_overview_long_press";
-        public static final String MENU_BUTTON_LONG_PRESS_TAG = "navbar_button_menu_long_press";
+        public static final String BACK_BUTTON_LONG_PRESS_TAG = "smartbar_button_back_long_press";
+        public static final String HOME_BUTTON_LONG_PRESS_TAG = "smartbar_button_home_long_press";
+        public static final String OVERVIEW_BUTTON_LONG_PRESS_TAG = "smartbar_button_overview_long_press";
+        public static final String MENU_BUTTON_LONG_PRESS_TAG = "smartbar_button_menu_long_press";
 
-        public static final String BACK_BUTTON_DOUBLE_TAP_TAG = "navbar_button_back_double_tap";
-        public static final String HOME_BUTTON_DOUBLE_TAP_TAG = "navbar_button_home_double_tap";
-        public static final String OVERVIEW_BUTTON_DOUBLE_TAP_TAG = "navbar_button_overview_double_tap";
-        public static final String MENU_BUTTON_DOUBLE_TAP_TAG = "navbar_button_menu_double_tap";
+        public static final String BACK_BUTTON_DOUBLE_TAP_TAG = "smartbar_button_back_double_tap";
+        public static final String HOME_BUTTON_DOUBLE_TAP_TAG = "smartbar_button_home_double_tap";
+        public static final String OVERVIEW_BUTTON_DOUBLE_TAP_TAG = "smartbar_button_overview_double_tap";
+        public static final String MENU_BUTTON_DOUBLE_TAP_TAG = "smartbar_button_menu_double_tap";
 
         private static final Map<String, ConfigMap> configMap = new HashMap<String, ConfigMap>();
 
@@ -129,8 +129,8 @@ public class ActionConstants {
             configMap.put(MENU_BUTTON_DOUBLE_TAP_TAG, new ConfigMap(3, ActionConfig.THIRD));
         }
 
-        public static final String NAVIGATION_CONFIG_DEFAULT =
-                dl(NAVBAR_DEF_BUTTONS)                                                              // default number of ButtonConfig
+        public static final String SMARTBAR_CONFIG_DEFAULT =
+                dl(SMARTBAR_DEF_BUTTONS)                                                              // default number of ButtonConfig
               + dl(BUTTON1_TAG)                                                                     // button tag
               + dl(SystemAction.Back.mAction)       + dl(SystemAction.Back.mLabelRes)     + dl(EMPTY)  // single tap (PRIMARY)
               + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)  // long press (SECOND)
@@ -153,23 +153,22 @@ public class ActionConstants {
 
         @Override
         public String getUri() {
-            //return Settings.System.NAVIGATION_BUTTON_ACTIONS;
-            return "navigation_button_config";
+            return "smartbar_button_config";
         }
 
         @Override
         public String getDefaultConfig() {
-            return NAVIGATION_CONFIG_DEFAULT;
+            return SMARTBAR_CONFIG_DEFAULT;
         }
 
         @Override
         public int getMaxButtons() {
-            return NAVBAR_MAX_BUTTONS;
+            return SMARTBAR_MAX_BUTTONS;
         }
 
         @Override
         public int getConfigType() {
-            return NAVBAR;
+            return SMARTBAR;
         }
 
         @Override

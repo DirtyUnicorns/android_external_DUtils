@@ -53,6 +53,47 @@ public class Config {
         public void fromList(Context ctx, List<String> items);
     }
 
+    /**
+     * For use with action/button based features that don't require a defaut configuration
+     */
+    public static ArrayList<ButtonConfig> getConfig(Context ctx, String uri,
+            boolean fromSecureSettings) {
+        if (ctx == null || uri == null) {
+            return null;
+        }
+        String config;
+        if (fromSecureSettings) {
+            config = Settings.Secure.getStringForUser(
+                    ctx.getContentResolver(), uri,
+                    UserHandle.USER_CURRENT);
+        } else {
+            config = Settings.System.getStringForUser(
+                    ctx.getContentResolver(), uri,
+                    UserHandle.USER_CURRENT);
+        }
+        if (TextUtils.isEmpty(config)) {
+            return null;
+        }
+        ArrayList<String> items = new ArrayList<String>();
+        items.addAll(Arrays.asList(config.split("\\|"))); // split string into array elements
+        int numConfigs = Integer.parseInt(items.get(0)); // first element is always the number of
+                                                         // ButtonConfigs to parse
+        items.remove(0); // remove button count for a clean list of buttons
+
+        ArrayList<ButtonConfig> buttonList = new ArrayList<ButtonConfig>();
+        ButtonConfig buttonConfig;
+
+        for (int i = 0; i < numConfigs; i++) {
+            int from = i * ButtonConfig.NUM_ELEMENTS; // (0, 10), (10, 20)...
+            int to = from + ButtonConfig.NUM_ELEMENTS;
+            buttonConfig = new ButtonConfig(ctx);
+            buttonConfig.fromList(ctx, items.subList(from, to)); // initialize button from list
+                                                                 // elements
+            buttonList.add(buttonConfig);
+        }
+        return buttonList;
+    }
+
     public static ArrayList<ButtonConfig> getConfig(Context ctx, Defaults defaults) {
         if (ctx == null || defaults == null) {
             return null;
@@ -178,6 +219,18 @@ public class Config {
 
         public void setTag(String tag) {
             this.tag = tag;
+        }
+
+        public boolean hasCustomIcon() {
+            return configs[ActionConfig.PRIMARY].hasCustomIcon();
+        }
+
+        public void clearCustomIconIconUri() {
+            configs[ActionConfig.PRIMARY].clearCustomIconIconUri();
+        }
+
+        public void setCustomIconUri(String iconUri) {
+            configs[ActionConfig.PRIMARY].setCustomIconUri(iconUri);
         }
 
         public Drawable getDefaultIcon(Context ctx) {
@@ -311,18 +364,22 @@ public class Config {
         }
 
         public String getIconUri() {
-            if (TextUtils.equals(ActionConstants.EMPTY, iconUri)) {
+            if (!hasCustomIcon()) {
                 return action;
             } else {
                 return iconUri;
             }
         }
 
-        public void setDefaultIconUri() {
+        public boolean hasCustomIcon() {
+            return TextUtils.equals(ActionConstants.EMPTY, iconUri);
+        }
+
+        public void clearCustomIconIconUri() {
             iconUri = ActionConstants.EMPTY;
         }
 
-        public void setIconUri(String iconUri) {
+        public void setCustomIconUri(String iconUri) {
             this.iconUri = iconUri;
         }
 
