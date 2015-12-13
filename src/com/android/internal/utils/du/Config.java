@@ -48,7 +48,7 @@ import android.text.TextUtils;
 public class Config {
     private interface Stringable {
         public String toDelimitedString();
-        public void fromList(List<String> items);
+        public void fromList(Context ctx, List<String> items);
     }
 
     public static ArrayList<ButtonConfig> getConfig(Context ctx, Defaults defaults) {
@@ -73,8 +73,8 @@ public class Config {
         for (int i = 0; i < numConfigs; i++) {
             int from = i * ButtonConfig.NUM_ELEMENTS;  // (0, 10), (10, 20)...
             int to = from + ButtonConfig.NUM_ELEMENTS;
-            buttonConfig = new ButtonConfig();
-            buttonConfig.fromList(items.subList(from, to));  // initialize button from list elements
+            buttonConfig = new ButtonConfig(ctx);
+            buttonConfig.fromList(ctx, items.subList(from, to));  // initialize button from list elements
             buttonList.add(buttonConfig);
         }
         return buttonList;
@@ -95,8 +95,8 @@ public class Config {
         for (int i = 0; i < numConfigs; i++) {
             int from = i * ButtonConfig.NUM_ELEMENTS;
             int to = from + ButtonConfig.NUM_ELEMENTS;
-            buttonConfig = new ButtonConfig();
-            buttonConfig.fromList(items.subList(from, to));
+            buttonConfig = new ButtonConfig(ctx);
+            buttonConfig.fromList(ctx, items.subList(from, to));
             buttonList.add(buttonConfig);
         }
         return buttonList;
@@ -160,10 +160,14 @@ public class Config {
         protected ActionConfig[] configs = new ActionConfig[3];
         private String tag = ActionConstants.EMPTY;
 
-        public ButtonConfig() {
-            configs[ActionConfig.PRIMARY] = new ActionConfig();
-            configs[ActionConfig.SECOND] = new ActionConfig();
-            configs[ActionConfig.THIRD] = new ActionConfig();
+        // internal use only
+        private ButtonConfig() {
+        }
+
+        public ButtonConfig(Context ctx) {
+            configs[ActionConfig.PRIMARY] = new ActionConfig(ctx);
+            configs[ActionConfig.SECOND] = new ActionConfig(ctx);
+            configs[ActionConfig.THIRD] = new ActionConfig(ctx);
         }
 
         public String getTag() {
@@ -205,21 +209,21 @@ public class Config {
         }
 
         @Override
-        public void fromList(List<String> items) {
+        public void fromList(Context ctx, List<String> items) {
             ArrayList<String> buttons = new ArrayList<String>();
             buttons.addAll(items);
             tag = buttons.get(0);
 
             ActionConfig config = new ActionConfig();
-            config.fromList(buttons.subList(1, 4));
+            config.fromList(ctx, buttons.subList(1, 4));
             configs[ActionConfig.PRIMARY] = config;
 
             config = new ActionConfig();
-            config.fromList(buttons.subList(4, 7));
+            config.fromList(ctx, buttons.subList(4, 7));
             configs[ActionConfig.SECOND] = config;
 
             config = new ActionConfig();
-            config.fromList(buttons.subList(7, 10));
+            config.fromList(ctx, buttons.subList(7, 10));
             configs[ActionConfig.THIRD] = config;
         }
     }
@@ -233,8 +237,13 @@ public class Config {
         private String label = ActionConstants.EMPTY;
         private String iconUri = ActionConstants.EMPTY;
 
-        public ActionConfig() {
-        };
+        // internal use only
+        private ActionConfig() {            
+        }
+
+        public static ActionConfig create(Context ctx) {
+            return new ActionConfig(ctx);
+        }
 
         public static ActionConfig create(Context ctx, String action) {
             return new ActionConfig(ctx, action);
@@ -244,14 +253,18 @@ public class Config {
             return new ActionConfig(ctx, action, iconUri);
         }
 
-        public ActionConfig(Context ctx, String action, String iconUri) {
-            this(ctx, action);
-            this.iconUri = iconUri;
+        public ActionConfig(Context ctx) {
+            label = DUActionUtils.getFriendlyNameForUri(ctx, action);
         }
 
         public ActionConfig(Context ctx, String action) {
             this.action = action;
-            this.label = DUActionUtils.getFriendlyNameForUri(ctx, action);
+            label = DUActionUtils.getFriendlyNameForUri(ctx, action);
+        }
+
+        public ActionConfig(Context ctx, String action, String iconUri) {
+            this(ctx, action);
+            this.iconUri = iconUri;
         }
 
         public String getAction() {
@@ -309,11 +322,11 @@ public class Config {
         }
 
         @Override
-        public void fromList(List<String> items) {
+        public void fromList(Context ctx, List<String> items) {
             ArrayList<String> actionStrings = new ArrayList<String>();
             actionStrings.addAll(items);
             action = items.get(0);
-            label = items.get(1);
+            label = DUActionUtils.getFriendlyNameForUri(ctx, action);
             iconUri = items.get(2);
         }
     }
