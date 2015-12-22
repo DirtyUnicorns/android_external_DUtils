@@ -101,7 +101,7 @@ public class Config {
         String config = Settings.Secure.getStringForUser(
                 ctx.getContentResolver(), defaults.getUri(),
                 UserHandle.USER_CURRENT);
-        if (config == null) {
+        if (TextUtils.isEmpty(config)) {
             config = defaults.getDefaultConfig();
         }
 
@@ -229,8 +229,8 @@ public class Config {
             configs[ActionConfig.PRIMARY].clearCustomIconIconUri();
         }
 
-        public void setCustomIconUri(String iconUri) {
-            configs[ActionConfig.PRIMARY].setCustomIconUri(iconUri);
+        public void setCustomIconUri(String type, String packageName, String iconName) {
+            configs[ActionConfig.PRIMARY].setCustomIconUri(type, packageName, iconName);
         }
 
         public Drawable getDefaultIcon(Context ctx) {
@@ -372,15 +372,21 @@ public class Config {
         }
 
         public boolean hasCustomIcon() {
-            return TextUtils.equals(ActionConstants.EMPTY, iconUri);
+            return !TextUtils.equals(ActionConstants.EMPTY, iconUri);
         }
 
         public void clearCustomIconIconUri() {
             iconUri = ActionConstants.EMPTY;
         }
 
-        public void setCustomIconUri(String iconUri) {
-            this.iconUri = iconUri;
+        public void setCustomIconUri(String type, String packageName, String iconName) {
+            StringBuilder b = new StringBuilder()
+            .append(type)
+            .append("$")
+            .append(packageName)
+            .append("$")
+            .append(iconName);
+            iconUri = b.toString();
         }
 
         public Drawable getDefaultIcon(Context ctx) {
@@ -388,7 +394,27 @@ public class Config {
         }
 
         public Drawable getCurrentIcon(Context ctx) {
-            return DUActionUtils.getDrawableForAction(ctx, getIconUri());
+            if (!hasCustomIcon()) {
+                return DUActionUtils.getDrawableForAction(ctx, action);
+            } else {
+                ArrayList<String> items = new ArrayList<String>();
+                // it's highly probable this is a safe secondary delimiter
+                // can't use "|" since this would split iconUri during initial
+                // ButtonConfig parsing
+                items.addAll(Arrays.asList(iconUri.split("\\$")));
+                String type = items.get(0);
+                if (TextUtils.equals(type, "iconpack") && items.size() == 3) {
+                    String packageName = items.get(1);
+                    String iconName = items.get(2);
+                    Drawable d = DUActionUtils.getDrawable(ctx, iconName, packageName);
+                    if (d == null) {
+                        d = DUActionUtils.getDrawableForAction(ctx, action);
+                    }
+                    return d;
+                } else {
+                    return DUActionUtils.getDrawableForAction(ctx, action);
+                }
+            }
         }
 
         public boolean hasNoAction() {

@@ -54,9 +54,10 @@ public abstract class DUSystemReceiver extends BroadcastReceiver {
             return false;
         }
         if (packageName.equals("com.android.systemui")
-                || (packageName.equals("com.android.keyguard")
-                || (packageName.equals("android")
-                || (context.getApplicationInfo().uid == android.os.Process.SYSTEM_UID)))) {
+                || packageName.equals("com.android.keyguard")
+                || packageName.equals("com.android.settings")
+                || packageName.equals("android")
+                || context.getApplicationInfo().uid == android.os.Process.SYSTEM_UID) {
             return true;
         }
         if (onExemptBroadcast(context, packageName)) {

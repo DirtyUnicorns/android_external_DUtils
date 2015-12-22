@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 The TeamEos Project
+ * Copyright (C) 2016 The DirtyUnicorns Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,6 +115,7 @@ public class ActionHandler {
     public static final String SYSTEMUI_TASK_SOUNDMODE_SILENT = "task_soundmode_silent";
     public static final String SYSTEMUI_TASK_SOUNDMODE_VIB_SILENT = "task_soundmode_vib_silent";
     public static final String SYSTEMUI_TASK_WAKE_DEVICE = "task_wake_device";
+    public static final String SYSTEMUI_TASK_STOP_SCREENPINNING = "task_stop_screenpinning";
 
     public static final String INTENT_SHOW_POWER_MENU = "action_handler_show_power_menu";
     public static final String INTENT_TOGGLE_SCREENRECORD = "action_handler_toggle_screenrecord";
@@ -141,7 +143,13 @@ public class ActionHandler {
         PowerMenu(SYSTEMUI_TASK_POWER_MENU, SYSTEMUI, "label_action_power_menu", "ic_sysbar_power_menu"),
         Menu(SYSTEMUI_TASK_MENU, SYSTEMUI, "label_action_menu", "ic_sysbar_menu"),
         Back(SYSTEMUI_TASK_BACK, SYSTEMUI, "label_action_back", "ic_sysbar_back"),
-        Home(SYSTEMUI_TASK_HOME, SYSTEMUI, "label_action_home", "ic_sysbar_home");
+        Home(SYSTEMUI_TASK_HOME, SYSTEMUI, "label_action_home", "ic_sysbar_home"),
+        Ime(SYSTEMUI_TASK_IME_SWITCHER, SYSTEMUI, "label_action_ime_switcher", "ic_ime_switcher_default"),
+        StopScreenPinning(SYSTEMUI_TASK_STOP_SCREENPINNING, SYSTEMUI, "label_action_stop_screenpinning", "ic_smartbar_screen_pinning_off"),
+        ImeArrowDown(SYSTEMUI_TASK_IME_NAVIGATION_DOWN, SYSTEMUI, "label_action_ime_down", "ic_sysbar_ime_down"),
+        ImeArrowLeft(SYSTEMUI_TASK_IME_NAVIGATION_LEFT, SYSTEMUI, "label_action_ime_left", "ic_sysbar_ime_left"),
+        ImeArrowRight(SYSTEMUI_TASK_IME_NAVIGATION_RIGHT, SYSTEMUI, "label_action_ime_right", "ic_sysbar_ime_right"),
+        ImeArrowUp(SYSTEMUI_TASK_IME_NAVIGATION_UP, SYSTEMUI, "label_action_ime_up", "ic_sysbar_ime_up");
 
         String mAction;
         String mResPackage;
@@ -156,10 +164,13 @@ public class ActionHandler {
         }
 
         private ActionConfig create(Context ctx) {
-            return new ActionConfig(ctx, mAction, mAction);
+            return new ActionConfig(ctx, mAction);
         }
     }
 
+    /*
+     * Enumerated system actions with label and drawable support
+     */
     static SystemAction[] systemActions = new SystemAction[] {
             SystemAction.NoAction, SystemAction.SettingsPanel,
             SystemAction.NotificationPanel, SystemAction.Screenshot,
@@ -171,15 +182,29 @@ public class ActionHandler {
             SystemAction.Overview,SystemAction.Menu,
             SystemAction.Back, SystemAction.VoiceSearch,
             SystemAction.Home, SystemAction.ExpandedDesktop,
-            SystemAction.Screenrecord
+            SystemAction.Screenrecord, SystemAction.Ime,
+            SystemAction.StopScreenPinning, SystemAction.ImeArrowDown,
+            SystemAction.ImeArrowLeft, SystemAction.ImeArrowRight, SystemAction.ImeArrowUp
     };
 
+    /*
+     * Default list to display in an action picker
+     * Filter by device capabilities and actions used internally
+     * but we don't really want as assignable
+     */
     public static ArrayList<ActionConfig> getSystemActions(Context context) {
         ArrayList<ActionConfig> bundle = new ArrayList<ActionConfig>();
         for (int i = 0; i < systemActions.length; i++) {
             ActionConfig c = systemActions[i].create(context);
             String action = c.getAction();
-            if (TextUtils.equals(action, SYSTEMUI_TASK_WIFIAP)
+            if (TextUtils.equals(action, SYSTEMUI_TASK_STOP_SCREENPINNING)
+                    || TextUtils.equals(action, SYSTEMUI_TASK_IME_NAVIGATION_DOWN)
+                    || TextUtils.equals(action, SYSTEMUI_TASK_IME_NAVIGATION_LEFT)
+                    || TextUtils.equals(action, SYSTEMUI_TASK_IME_NAVIGATION_RIGHT)
+                    || TextUtils.equals(action, SYSTEMUI_TASK_IME_NAVIGATION_UP)
+                    || TextUtils.equals(action, SYSTEMUI_TASK_IME_SWITCHER)) {
+                continue;
+            } else if (TextUtils.equals(action, SYSTEMUI_TASK_WIFIAP)
                     && !DUActionUtils.deviceSupportsMobileData(context)) {
                 continue;
             } else if (TextUtils.equals(action, SYSTEMUI_TASK_BT)
@@ -420,12 +445,12 @@ public class ActionHandler {
         } else if (action.equals(SYSTEMUI_TASK_HOME)) {
             triggerVirtualKeypress(context, KeyEvent.KEYCODE_HOME);
             return;
-        } else if (action.equals(SYSTEMUI_TASK_IME_NAVIGATION_LEFT)) {
-            triggerVirtualKeypress(context, KeyEvent.KEYCODE_DPAD_LEFT);
-            return;
         } else if (action.equals(SYSTEMUI_TASK_IME_SWITCHER)) {
             ((InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE))
                     .showInputMethodPicker(true /* showAuxiliarySubtypes */);
+            return;
+        } else if (action.equals(SYSTEMUI_TASK_STOP_SCREENPINNING)) {
+            turnOffLockTask();
             return;
         } else if (action.equals(SYSTEMUI_TASK_IME_NAVIGATION_RIGHT)) {
             triggerVirtualKeypress(context, KeyEvent.KEYCODE_DPAD_RIGHT);
@@ -435,6 +460,9 @@ public class ActionHandler {
             return;
         } else if (action.equals(SYSTEMUI_TASK_IME_NAVIGATION_DOWN)) {
             triggerVirtualKeypress(context, KeyEvent.KEYCODE_DPAD_DOWN);
+            return;
+        } else if (action.equals(SYSTEMUI_TASK_IME_NAVIGATION_LEFT)) {
+            triggerVirtualKeypress(context, KeyEvent.KEYCODE_DPAD_LEFT);
             return;
         } else if (action.equals(SYSTEMUI_TASK_MEDIA_PREVIOUS)) {
             dispatchMediaKeyWithWakeLock(KeyEvent.KEYCODE_MEDIA_PREVIOUS, context);

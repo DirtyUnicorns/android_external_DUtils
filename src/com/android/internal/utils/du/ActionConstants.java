@@ -87,8 +87,8 @@ public class ActionConstants {
     }
 
     public static class Smartbar implements Defaults {
-        public static final int SMARTBAR_MAX_BUTTONS = 7;
-        public static final String SMARTBAR_DEF_BUTTONS = "4";
+        public static final int SMARTBAR_MAX_BUTTONS = 10;
+        public static final String SMARTBAR_DEF_BUTTONS = "3";
         public static final String BUTTON1_TAG = "smartbar_button_1";
         public static final String BUTTON2_TAG = "smartbar_button_2";
         public static final String BUTTON3_TAG = "smartbar_button_3";
@@ -97,63 +97,36 @@ public class ActionConstants {
         public static final String BUTTON6_TAG = "smartbar_button_6";
         public static final String BUTTON7_TAG = "smartbar_button_7";
 
-        public static final String BACK_BUTTON_SINGLE_TAP_TAG = "smartbar_button_back_single_tap";
-        public static final String HOME_BUTTON_SINGLE_TAP_TAG = "smartbar_button_home_single_tap";
-        public static final String OVERVIEW_BUTTON_SINGLE_TAP_TAG = "smartbar_button_overview_single_tap";
-        public static final String MENU_BUTTON_SINGLE_TAP_TAG = "smartbar_button_menu_single_tap";
-
-        public static final String BACK_BUTTON_LONG_PRESS_TAG = "smartbar_button_back_long_press";
-        public static final String HOME_BUTTON_LONG_PRESS_TAG = "smartbar_button_home_long_press";
-        public static final String OVERVIEW_BUTTON_LONG_PRESS_TAG = "smartbar_button_overview_long_press";
-        public static final String MENU_BUTTON_LONG_PRESS_TAG = "smartbar_button_menu_long_press";
-
-        public static final String BACK_BUTTON_DOUBLE_TAP_TAG = "smartbar_button_back_double_tap";
-        public static final String HOME_BUTTON_DOUBLE_TAP_TAG = "smartbar_button_home_double_tap";
-        public static final String OVERVIEW_BUTTON_DOUBLE_TAP_TAG = "smartbar_button_overview_double_tap";
-        public static final String MENU_BUTTON_DOUBLE_TAP_TAG = "smartbar_button_menu_double_tap";
-
-        private static final Map<String, ConfigMap> configMap = new HashMap<String, ConfigMap>();
-
-        static {
-            configMap.put(BACK_BUTTON_SINGLE_TAP_TAG, new ConfigMap(0, ActionConfig.PRIMARY));
-            configMap.put(HOME_BUTTON_SINGLE_TAP_TAG, new ConfigMap(1, ActionConfig.PRIMARY));
-            configMap.put(OVERVIEW_BUTTON_SINGLE_TAP_TAG, new ConfigMap(2, ActionConfig.PRIMARY));
-            configMap.put(MENU_BUTTON_SINGLE_TAP_TAG, new ConfigMap(3, ActionConfig.PRIMARY));
-            configMap.put(BACK_BUTTON_LONG_PRESS_TAG, new ConfigMap(0, ActionConfig.SECOND));
-            configMap.put(HOME_BUTTON_LONG_PRESS_TAG, new ConfigMap(1, ActionConfig.SECOND));
-            configMap.put(OVERVIEW_BUTTON_LONG_PRESS_TAG, new ConfigMap(2, ActionConfig.SECOND));
-            configMap.put(MENU_BUTTON_LONG_PRESS_TAG, new ConfigMap(3, ActionConfig.SECOND));
-            configMap.put(BACK_BUTTON_DOUBLE_TAP_TAG, new ConfigMap(0, ActionConfig.THIRD));
-            configMap.put(HOME_BUTTON_DOUBLE_TAP_TAG, new ConfigMap(1, ActionConfig.THIRD));
-            configMap.put(OVERVIEW_BUTTON_DOUBLE_TAP_TAG, new ConfigMap(2, ActionConfig.THIRD));
-            configMap.put(MENU_BUTTON_DOUBLE_TAP_TAG, new ConfigMap(3, ActionConfig.THIRD));
-        }
-
         public static final String SMARTBAR_CONFIG_DEFAULT =
                 dl(SMARTBAR_DEF_BUTTONS)                                                              // default number of ButtonConfig
               + dl(BUTTON1_TAG)                                                                     // button tag
               + dl(SystemAction.Back.mAction)       + dl(SystemAction.Back.mLabelRes)     + dl(EMPTY)  // single tap (PRIMARY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)  // long press (SECOND)
+              + dl(SystemAction.NoAction.mAction)    + dl(SystemAction.NoAction.mLabelRes)  + dl(EMPTY)  // long press (SECOND)
               + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)  // double tap (THIRD)
 
               + dl(BUTTON2_TAG)
               + dl(SystemAction.Home.mAction)       + dl(SystemAction.Home.mLabelRes)     + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)
+              + dl(SystemAction.GoogleNowOnTap.mAction)   + dl(SystemAction.GoogleNowOnTap.mLabelRes) + dl(EMPTY)
               + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)
 
               + dl(BUTTON3_TAG)
               + dl(SystemAction.Overview.mAction)   + dl(SystemAction.Overview.mLabelRes) + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)
-
+              + dl(SystemAction.LastApp.mAction)    + dl(SystemAction.LastApp.mLabelRes)  + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + EMPTY;
+/*
               + dl(BUTTON4_TAG)
-              + dl(SystemAction.Menu.mAction)       + dl(SystemAction.Menu.mLabelRes)     + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + EMPTY;     // don't delimit final string
+              + dl(SystemAction.ExpandedDesktop.mAction)       + dl(SystemAction.ExpandedDesktop.mLabelRes)     + dl(EMPTY)
+              + dl(SystemAction.Flashlight.mAction)   + dl(SystemAction.Flashlight.mLabelRes) + dl(EMPTY)
+              + dl(SystemAction.PowerMenu.mAction)   + dl(SystemAction.PowerMenu.mLabelRes) + dl(EMPTY)
 
+              + dl(BUTTON5_TAG)
+              + dl(SystemAction.Screenshot.mAction)       + dl(SystemAction.Screenshot.mLabelRes)     + dl(EMPTY)
+              + dl(SystemAction.Screenrecord.mAction)   + dl(SystemAction.Screenrecord.mLabelRes) + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + EMPTY;
+*/
         @Override
         public String getUri() {
-            return "smartbar_button_config";
+            return "smartbar_button_config_test3";
         }
 
         @Override
@@ -173,7 +146,7 @@ public class ActionConstants {
 
         @Override
         public Map<String, ConfigMap> getActionMap() {
-            return configMap;
+            return null;
         }
 
         @Override
