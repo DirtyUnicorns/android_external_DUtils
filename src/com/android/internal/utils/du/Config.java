@@ -255,6 +255,48 @@ public class Config {
             configs[which] = config;
         }
 
+        public static void setButton(Context ctx, ButtonConfig button, String uri, boolean isSecure) {
+            StringBuilder b = new StringBuilder();
+            b.append(button.toDelimitedString()); // this is just beautiful ;D
+            String s = b.toString();
+            if (s.endsWith(ActionConstants.ACTION_DELIMITER)) {
+                s = removeLastChar(s); // trim final delimiter if need be
+            }
+
+            if (isSecure) {
+                Settings.Secure.putStringForUser(ctx.getContentResolver(), uri, s,
+                        UserHandle.USER_CURRENT);
+            } else {
+                Settings.System.putStringForUser(ctx.getContentResolver(), uri, s,
+                        UserHandle.USER_CURRENT);
+            }
+        }
+
+        public static ButtonConfig getButton(Context ctx, String uri, boolean isSecure) {
+            if (ctx == null || TextUtils.isEmpty(uri)) {
+                return null;
+            }
+            String config;
+            if (isSecure) {
+                config = Settings.Secure.getStringForUser(
+                        ctx.getContentResolver(), uri,
+                        UserHandle.USER_CURRENT);
+            } else {
+                config = Settings.System.getStringForUser(
+                        ctx.getContentResolver(), uri,
+                        UserHandle.USER_CURRENT);
+            }
+            if (TextUtils.isEmpty(config)) {
+                return new ButtonConfig(ctx);
+            }
+            ArrayList<String> items = new ArrayList<String>();
+            items.addAll(Arrays.asList(config.split("\\|")));
+            ButtonConfig buttonConfig = new ButtonConfig(ctx);
+            buttonConfig.fromList(ctx, items.subList(0, NUM_ELEMENTS)); // initialize button from
+                                                                        // list elements
+            return buttonConfig;
+        }
+
         @Override
         public String toDelimitedString() {
             return tag + ActionConstants.ACTION_DELIMITER
