@@ -98,16 +98,16 @@ public final class DUActionUtils {
                 == context.getResources().getConfiguration().orientation;
     }
 
-	public static boolean hasNavbarByDefault(Context context) {
-		boolean needsNav = (Boolean)getValue(context, "config_showNavigationBar", BOOL, PACKAGE_ANDROID);
-		String navBarOverride = SystemProperties.get("qemu.hw.mainkeys");
-		if ("1".equals(navBarOverride)) {
-			needsNav = false;
-		} else if ("0".equals(navBarOverride)) {
-			needsNav = true;
-		}
-		return needsNav;
-	}
+    public static boolean hasNavbarByDefault(Context context) {
+        boolean needsNav = (Boolean)getValue(context, "config_showNavigationBar", BOOL, PACKAGE_ANDROID);
+        String navBarOverride = SystemProperties.get("qemu.hw.mainkeys");
+        if ("1".equals(navBarOverride)) {
+            needsNav = false;
+        } else if ("0".equals(navBarOverride)) {
+            needsNav = true;
+        }
+        return needsNav;
+    }
 
     public static boolean deviceSupportsLte(Context ctx) {
         final TelephonyManager tm = (TelephonyManager)
@@ -167,11 +167,11 @@ public final class DUActionUtils {
                 && sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null;
     }
 
-	public static boolean deviceSupportsDoze(Context context) {
-		String name = (String) getValue(context, "config_dozeComponent",
-				STRING, PACKAGE_ANDROID);
-		return !TextUtils.isEmpty(name);
-	}
+    public static boolean deviceSupportsDoze(Context context) {
+        String name = (String) getValue(context, "config_dozeComponent",
+                STRING, PACKAGE_ANDROID);
+        return !TextUtils.isEmpty(name);
+    }
 
     /**
      * This method converts dp unit to equivalent pixels, depending on device
@@ -331,43 +331,6 @@ public final class DUActionUtils {
         return intent;
     }
 
-    public static Drawable getDrawableForAction(Context context, String action) {
-        Drawable d = null;
-
-        // this null check is probably no-op but let's be safe anyways
-        if (action == null || context == null) {
-            return d;
-        }
-        if (action.startsWith(ActionHandler.SYSTEM_PREFIX)) {
-            for (int i = 0; i < ActionHandler.systemActions.length; i++) {
-                if (ActionHandler.systemActions[i].mAction.equals(action)) {
-                    Resources res = getResourcesForPackage(context,
-                            ActionHandler.systemActions[i].mResPackage);
-                    String iconName = ActionHandler.systemActions[i].mIconRes;
-                    if (isNavbarResource(action)) {
-                        d = getNavbarThemedDrawable(context, res, iconName);
-                    } else {
-                        d = getDrawable(res, iconName,
-                                ActionHandler.systemActions[i].mResPackage);
-                    }
-                }
-            }
-        } else {
-            d = getDrawableFromComponent(context.getPackageManager(), action);
-        }
-        return d;
-    }
-
-    public static Resources getResourcesForPackage(Context ctx, String pkg) {
-        try {
-            Resources res = ctx.getPackageManager()
-                    .getResourcesForApplication(pkg);
-            return res;
-        } catch (Exception e) {
-            return ctx.getResources();
-        }
-    }
-
     public static Object getValue(Context context, String resName, String resType, String pkg) {
         return getValue(context, resName, resType, null, pkg);
     }
@@ -469,20 +432,6 @@ public final class DUActionUtils {
         return getDrawable(getResourcesForPackage(context, pkg), drawableName, pkg);
     }
 
-    public static Drawable getDrawable(Resources res, String drawableName, String pkg) {
-        try {
-            int resId = res.getIdentifier(drawableName, DRAWABLE, pkg);
-            Drawable icon = ImageHelper.getVector(res, resId, false);
-            if (icon == null) {
-                icon = res.getDrawable(resId);
-            }
-            return icon;
-        } catch (Exception e) {
-            return res.getDrawable(
-                    com.android.internal.R.drawable.sym_def_app_icon);
-        }
-    }
-
     public static Drawable getDrawableFromComponent(PackageManager pm, String activity) {
         Drawable d = null;
         try {
@@ -545,17 +494,35 @@ public final class DUActionUtils {
         return uri;
     }
 
-    public static boolean isNavbarResource(String res) {
-        return TextUtils.equals(res, ActionHandler.SYSTEMUI_TASK_RECENTS)
-                || TextUtils.equals(res, ActionHandler.SYSTEMUI_TASK_BACK)
-                || TextUtils.equals(res, ActionHandler.SYSTEMUI_TASK_HOME)
-                || TextUtils.equals(res, ActionHandler.SYSTEMUI_TASK_MENU)
-                || TextUtils.equals(res, "ic_sysbar_recent")
-                || TextUtils.equals(res, "ic_sysbar_back")
-                || TextUtils.equals(res, "ic_sysbar_home")
-                || TextUtils.equals(res, "ic_sysbar_menu");
+    /**
+     * 
+     * @param Target package resources
+     * @param drawableName
+     * @param Target package name
+     * @return the drawable if found, otherwise fall back to a green android guy
+     */
+    public static Drawable getDrawable(Resources res, String drawableName, String pkg) {
+        try {
+            int resId = res.getIdentifier(drawableName, DRAWABLE, pkg);
+            Drawable icon = ImageHelper.getVector(res, resId, false);
+            if (icon == null) {
+                icon = res.getDrawable(resId);
+            }
+            return icon;
+        } catch (Exception e) {
+            return res.getDrawable(
+                    com.android.internal.R.drawable.sym_def_app_icon);
+        }
     }
 
+    /**
+     * 
+     * @param Target package resources
+     * @param drawableName
+     * @param Target package name
+     * @return the drawable if found, null otherwise. Useful for testing if a drawable is found
+     *         in a theme overlay
+     */
     private static Drawable getMaybeNullDrawable(Resources res, String drawableName, String pkg) {
         try {
             int resId = res.getIdentifier(drawableName, DRAWABLE, pkg);
@@ -569,13 +536,65 @@ public final class DUActionUtils {
         }
     }
 
+    public static Resources getResourcesForPackage(Context ctx, String pkg) {
+        try {
+            Resources res = ctx.getPackageManager()
+                    .getResourcesForApplication(pkg);
+            return res;
+        } catch (Exception e) {
+            return ctx.getResources();
+        }
+    }
 
+    /**
+     * 
+     * @param Context of the calling package
+     * @param the action we want a drawable for
+     * @return if a system action drawable is requested, we try to get the drawable
+     *         from any current navigation overlay. if no overlay is found, get it
+     *         from SystemUI. Return a component drawable if not a system action
+     */
+    public static Drawable getDrawableForAction(Context context, String action) {
+        Drawable d = null;
+
+        // this null check is probably no-op but let's be safe anyways
+        if (action == null || context == null) {
+            return d;
+        }
+        if (action.startsWith(ActionHandler.SYSTEM_PREFIX)) {
+            for (int i = 0; i < ActionHandler.systemActions.length; i++) {
+                if (ActionHandler.systemActions[i].mAction.equals(action)) {
+                    // should always be SystemUI
+                    String packageName = ActionHandler.systemActions[i].mResPackage;
+                    Resources res = getResourcesForPackage(context, packageName);
+                    String iconName = ActionHandler.systemActions[i].mIconRes;
+                    d = getNavbarThemedDrawable(context, res, iconName);
+                    if (d == null) {
+                        d = getDrawable(res, iconName, packageName);
+                    }
+                }
+            }
+        } else {
+            d = getDrawableFromComponent(context.getPackageManager(), action);
+        }
+        return d;
+    }
+
+    /**
+     * 
+     * @param calling package context, usually Settings for the custom action list adapter
+     * @param target package resources, usually SystemUI
+     * @param drawableName
+     * @return a navigation bar overlay themed action drawable if available, otherwise
+     *         return drawable from SystemUI resources
+     */
     public static Drawable getNavbarThemedDrawable(Context context, Resources defRes,
             String drawableName) {
-        if (context == null)
+        if (context == null || defRes == null || drawableName == null)
             return null;
+
         ThemeConfig themeConfig = context.getResources().getConfiguration().themeConfig;
-        Resources res = null;
+
         Drawable d = null;
         if (themeConfig != null) {
             try {
@@ -587,46 +606,26 @@ public final class DUActionUtils {
                     // But we can't assume navbar package has our drawable, so try navbar theme
                     // package first. If we fail, try the systemui (statusbar) package
                     // if we still fail, fall back to default package resource
-                    res = context.getPackageManager().getThemedResourcesForApplication(
+                    Resources res = context.getPackageManager().getThemedResourcesForApplication(
                             PACKAGE_SYSTEMUI, navbarThemePkgName);
                     d = getMaybeNullDrawable(res, drawableName, PACKAGE_SYSTEMUI);
                     if (d == null) {
-                        // get it from systemui
+                        // drawable not found in overlay, get from default SystemUI res
                         d = getDrawable(defRes, drawableName, PACKAGE_SYSTEMUI);
                     }
                 } else {
-                    // same package
+                    // no navbar overlay present, get from default SystemUI res
                     d = getDrawable(defRes, drawableName, PACKAGE_SYSTEMUI);
                 }
             } catch (PackageManager.NameNotFoundException e) {
+                // error thrown (unlikely), get from default SystemUI res
                 d = getDrawable(defRes, drawableName, PACKAGE_SYSTEMUI);
             }
         }
         if (d == null) {
+            // theme config likely null, get from default SystemUI res
             d = getDrawable(defRes, drawableName, PACKAGE_SYSTEMUI);
         }
         return d;
     }
-
-    public static Resources getNavbarThemedResources(Context context) {
-        if (context == null)
-            return null;
-        ThemeConfig themeConfig = context.getResources().getConfiguration().themeConfig;
-        Resources res = null;
-        if (themeConfig != null) {
-            try {
-                final String navbarThemePkgName = themeConfig.getOverlayForNavBar();
-                final String sysuiThemePkgName = themeConfig.getOverlayForStatusBar();
-                // Check if the same theme is applied for systemui, if so we can skip this
-                if (navbarThemePkgName != null && !navbarThemePkgName.equals(sysuiThemePkgName)) {
-                    res = context.getPackageManager().getThemedResourcesForApplication(
-                            context.getPackageName(), navbarThemePkgName);
-                }
-            } catch (PackageManager.NameNotFoundException e) {
-                // don't care since we'll handle res being null below
-            }
-        }
-        return res != null ? res : context.getResources();
-    }
-
 }
