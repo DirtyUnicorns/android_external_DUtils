@@ -241,6 +241,14 @@ public class Config {
             return configs[ActionConfig.PRIMARY].getCurrentIcon(ctx);
         }
 
+        public boolean isSystemAction() {
+            return configs[ActionConfig.PRIMARY].isSystemAction();
+        }
+
+        public String getSystemActionIconName() {
+            return configs[ActionConfig.PRIMARY].getSystemActionIconName();
+        }
+
         public ActionConfig getActionConfig(int which) {
             if (which < ActionConfig.PRIMARY || which > ActionConfig.THIRD) {
                 return null;
@@ -419,6 +427,21 @@ public class Config {
 
         public void clearCustomIconIconUri() {
             iconUri = ActionConstants.EMPTY;
+        }
+
+        public boolean isSystemAction() {
+            return action.startsWith(ActionHandler.SYSTEM_PREFIX);
+        }
+
+        public String getSystemActionIconName() {
+            if (action.startsWith(ActionHandler.SYSTEM_PREFIX)) {
+                for (int i = 0; i < ActionHandler.systemActions.length; i++) {
+                    if (ActionHandler.systemActions[i].mAction.equals(action)) {
+                        return ActionHandler.systemActions[i].mIconRes;
+                    }
+                }
+            }
+            return null;
         }
 
         public void setCustomIconUri(String type, String packageName, String iconName) {

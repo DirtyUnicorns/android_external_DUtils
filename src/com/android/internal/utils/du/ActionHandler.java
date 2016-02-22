@@ -35,6 +35,8 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.hardware.input.InputManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
@@ -62,7 +64,9 @@ import android.view.inputmethod.InputMethodManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.utils.du.Config.ActionConfig;
@@ -186,6 +190,32 @@ public class ActionHandler {
             SystemAction.StopScreenPinning, SystemAction.ImeArrowDown,
             SystemAction.ImeArrowLeft, SystemAction.ImeArrowRight, SystemAction.ImeArrowUp
     };
+
+    public static class ActionIconMap {
+        Drawable[] mDrawables;
+        Map<String, Integer> mIndexMap;
+
+        public ActionIconMap(Resources res) {
+            mDrawables = new Drawable[systemActions.length];
+            mIndexMap = new HashMap<String, Integer>();
+            for (int i = 0; i < systemActions.length; i++) {
+                mIndexMap.put(systemActions[i].mAction, i);
+                mDrawables[i] = DUActionUtils.getDrawable(res, systemActions[i].mIconRes,
+                        systemActions[i].mResPackage);
+            }
+        }
+
+        public void updateIcons(Resources res) {
+            for (int i = 0; i < mDrawables.length; i++) {
+                mDrawables[i] = DUActionUtils.getDrawable(res, systemActions[i].mIconRes,
+                        systemActions[i].mResPackage);
+            }
+        }
+
+        public Drawable getDrawable(String action) {
+            return mDrawables[mIndexMap.get(action)];
+        }
+    }
 
     /*
      * Default list to display in an action picker
