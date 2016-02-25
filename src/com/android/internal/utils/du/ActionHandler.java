@@ -191,11 +191,11 @@ public class ActionHandler {
             SystemAction.ImeArrowLeft, SystemAction.ImeArrowRight, SystemAction.ImeArrowUp
     };
 
-    public static class ActionIconMap {
+    public static class ActionIconResources {
         Drawable[] mDrawables;
         Map<String, Integer> mIndexMap;
 
-        public ActionIconMap(Resources res) {
+        public ActionIconResources(Resources res) {
             mDrawables = new Drawable[systemActions.length];
             mIndexMap = new HashMap<String, Integer>();
             for (int i = 0; i < systemActions.length; i++) {
@@ -205,14 +205,14 @@ public class ActionHandler {
             }
         }
 
-        public void updateIcons(Resources res) {
+        public void updateResources(Resources res) {
             for (int i = 0; i < mDrawables.length; i++) {
                 mDrawables[i] = DUActionUtils.getDrawable(res, systemActions[i].mIconRes,
                         systemActions[i].mResPackage);
             }
         }
 
-        public Drawable getDrawable(String action) {
+        public Drawable getActionDrawable(String action) {
             return mDrawables[mIndexMap.get(action)];
         }
     }
