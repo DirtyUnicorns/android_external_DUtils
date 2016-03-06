@@ -53,6 +53,7 @@ import android.os.SystemClock;
 import android.os.UserHandle;
 import android.os.Vibrator;
 import android.provider.Settings;
+import android.service.wallpaper.WallpaperService;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Slog;
@@ -825,7 +826,9 @@ public class ActionHandler {
                                 && (appInfo.pkgList.length > 0)) {
                             for (String pkg : appInfo.pkgList) {
                                 if (!pkg.equals("com.android.systemui")
-                                        && !pkg.equals(defaultHomePackage)) {
+                                        && !pkg.equals(defaultHomePackage)
+                                        && !pkg.equals("com.google.android.googlequicksearchbox")
+                                        && !isPackageLiveWalls(context, pkg)) {
                                     am.forceStopPackage(pkg,
                                             UserHandle.USER_CURRENT);
                                     break;
@@ -843,6 +846,27 @@ public class ActionHandler {
         } else {
             Log.d("ActionHandler", "Caller cannot kill processes, aborting");
         }
+    }
+
+    private static boolean isPackageLiveWalls(Context ctx, String pkg) {
+        if (ctx == null || pkg == null) {
+            return false;
+        }
+        List<ResolveInfo> liveWallsList = ctx.getPackageManager().queryIntentServices(
+                new Intent(WallpaperService.SERVICE_INTERFACE),
+                PackageManager.GET_META_DATA);
+        if (liveWallsList == null) {
+            return false;
+        }
+        for (ResolveInfo info : liveWallsList) {
+            if (info.serviceInfo != null) {
+                String packageName = info.serviceInfo.packageName;
+                if (TextUtils.equals(pkg, packageName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static void screenOff(Context context) {
