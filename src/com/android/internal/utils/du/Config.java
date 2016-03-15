@@ -41,6 +41,7 @@ import com.android.internal.utils.du.ActionConstants.Defaults;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.UserHandle;
@@ -231,6 +232,10 @@ public class Config {
 
         public void setCustomIconUri(String type, String packageName, String iconName) {
             configs[ActionConfig.PRIMARY].setCustomIconUri(type, packageName, iconName);
+        }
+
+        public void setCustomImageUri(Uri uri) {
+            configs[ActionConfig.PRIMARY].setCustomImageUri(uri);
         }
 
         public Drawable getDefaultIcon(Context ctx) {
@@ -444,6 +449,10 @@ public class Config {
             return null;
         }
 
+        public void setCustomImageUri(Uri uri) {
+            iconUri = "image$" + uri.toString();
+        }
+
         public void setCustomIconUri(String type, String packageName, String iconName) {
             StringBuilder b = new StringBuilder()
             .append(type)
@@ -458,28 +467,38 @@ public class Config {
             return DUActionUtils.getDrawableForAction(ctx, action);
         }
 
-        public Drawable getCurrentIcon(Context ctx) {
-            if (!hasCustomIcon()) {
-                return DUActionUtils.getDrawableForAction(ctx, action);
-            } else {
-                ArrayList<String> items = new ArrayList<String>();
-                // it's highly probable this is a safe secondary delimiter
-                // can't use "|" since this would split iconUri during initial
-                // ButtonConfig parsing
-                items.addAll(Arrays.asList(iconUri.split("\\$")));
+        /**
+         * Returns custom icon (if exists)
+         * @param ctx app's context
+         * @return drawable when custom icon exists, null otherwise
+         */
+        public Drawable getCurrentCustomIcon(Context ctx) {
+            if (hasCustomIcon()) {
+                List<String> items = Arrays.asList(iconUri.split("\\$"));
                 String type = items.get(0);
-                if (TextUtils.equals(type, "iconpack") && items.size() == 3) {
+                if (type.equals("iconpack") && items.size() == 3) {
                     String packageName = items.get(1);
                     String iconName = items.get(2);
-                    Drawable d = DUActionUtils.getDrawable(ctx, iconName, packageName);
-                    if (d == null) {
-                        d = DUActionUtils.getDrawableForAction(ctx, action);
-                    }
-                    return d;
-                } else {
-                    return DUActionUtils.getDrawableForAction(ctx, action);
+                    return DUActionUtils.getDrawable(ctx, iconName, packageName);
+                } else if (type.equals("image") && items.size() == 2) {
+                    String uri = items.get(1);
+                    return DUActionUtils.getDrawable(ctx, Uri.parse(uri));
                 }
             }
+            return null;
+        }
+
+        public Drawable getCurrentIcon(Context ctx) {
+
+            Drawable drawable = getCurrentCustomIcon(ctx);
+
+            //If icon doesn't exist (or is not set) fallback to action one
+            if (drawable == null) {
+                drawable = DUActionUtils.getDrawableForAction(ctx, action);
+            }
+
+            return drawable;
+
         }
 
         public boolean hasNoAction() {
