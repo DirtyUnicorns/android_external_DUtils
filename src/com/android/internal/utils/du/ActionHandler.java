@@ -62,6 +62,7 @@ import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.WindowManagerPolicyControl;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -814,6 +815,7 @@ public class ActionHandler {
                     defaultHomePackage = res.activityInfo.packageName;
                 }
                 IActivityManager am = ActivityManagerNative.getDefault();
+                boolean targetKilled = false;
                 List<RunningAppProcessInfo> apps = am.getRunningAppProcesses();
                 for (RunningAppProcessInfo appInfo : apps) {
                     int uid = appInfo.uid;
@@ -831,11 +833,17 @@ public class ActionHandler {
                                         && !isPackageLiveWalls(context, pkg)) {
                                     am.forceStopPackage(pkg,
                                             UserHandle.USER_CURRENT);
+                                    targetKilled = true;
                                     break;
                                 }
                             }
                         } else {
                             Process.killProcess(appInfo.pid);
+                            targetKilled = true;
+                        }
+                        if (targetKilled) {
+                            Toast.makeText(context, com.android.internal.R.string.app_killed_message,
+                                    Toast.LENGTH_SHORT).show();
                             break;
                         }
                     }
