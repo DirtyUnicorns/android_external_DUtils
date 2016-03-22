@@ -37,6 +37,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemProperties;
 import android.telephony.TelephonyManager;
@@ -46,6 +47,8 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
@@ -430,6 +433,16 @@ public final class DUActionUtils {
 
     public static Drawable getDrawable(Context context, String drawableName, String pkg) {
         return getDrawable(getResourcesForPackage(context, pkg), drawableName, pkg);
+    }
+
+    public static Drawable getDrawable(Context context, Uri uri) {
+        try {
+            InputStream inputStream = context.getContentResolver().openInputStream(uri);
+            return Drawable.createFromStream(inputStream, uri.toString());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static Drawable getDrawableFromComponent(PackageManager pm, String activity) {
