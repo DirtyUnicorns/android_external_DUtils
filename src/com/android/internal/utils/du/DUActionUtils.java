@@ -39,13 +39,16 @@ import android.hardware.camera2.CameraManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ServiceManager;
 import android.os.SystemProperties;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.IWindowManager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManagerGlobal;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -99,6 +102,17 @@ public final class DUActionUtils {
     public static boolean isLandscape(Context context) {
         return Configuration.ORIENTATION_LANDSCAPE
                 == context.getResources().getConfiguration().orientation;
+    }
+
+    public static boolean navigationBarCanMove() {
+        boolean canMove = false;
+        try {
+            IWindowManager windowService = IWindowManager.Stub.asInterface(
+                    ServiceManager.getService("window"));
+            canMove = windowService.navigationBarCanMove();
+        } catch (Exception e) {
+        }
+        return canMove;
     }
 
     public static boolean hasNavbarByDefault(Context context) {
