@@ -266,14 +266,14 @@ public class ActionConstants {
     }
 
     public static class Fling implements Defaults {
-        public static final int FLING_MAX_BUTTONS = 5;
-        public static final String FLING_DEF_BUTTONS = "4";
+        public static final int FLING_MAX_BUTTONS = 10;
+        public static final String FLING_DEF_BUTTONS = "5";
 
         public static final String RIGHT_TAP_TAG = "fling_right_taps";
         public static final String LEFT_TAP_TAG = "fling_left_taps";
         public static final String RIGHT_FLING_TAG = "fling_right";
         public static final String LEFT_FLING = "fling_left";
-        public static final String BUTTON5_TAG = "extra_5";
+        public static final String UP_FLING = "fling_up";
 
         public static final String SINGLE_LEFT_TAP_TAG = "single_left_tap";
         public static final String SINGLE_RIGHT_TAP_TAG = "single_right_tap";
@@ -285,6 +285,8 @@ public class ActionConstants {
         public static final String FLING_SHORT_RIGHT_TAG = "fling_short_right";
         public static final String FLING_LONG_LEFT_TAG = "fling_long_left";
         public static final String FLING_LONG_RIGHT_TAG = "fling_long_right";
+        public static final String FLING_RIGHT_UP_TAG = "fling_right_up";
+        public static final String FLING_LEFT_UP_TAG = "fling_left_up";
         public static final String CONFIG_fling_touchslop_increase_factor = "config_fling_touchslop_increase_factor";
         public static final String CONFIG_FlingLongSwipePortraitLeft = "config_FlingLongSwipePortraitLeft";
         public static final String CONFIG_FlingLongSwipePortraitRight = "config_FlingLongSwipePortraitRight";
@@ -353,6 +355,8 @@ public class ActionConstants {
             configMap.put(FLING_SHORT_RIGHT_TAG, new ConfigMap(2, ActionConfig.PRIMARY));
             configMap.put(FLING_LONG_LEFT_TAG, new ConfigMap(3, ActionConfig.SECOND));
             configMap.put(FLING_LONG_RIGHT_TAG, new ConfigMap(2, ActionConfig.SECOND));
+            configMap.put(FLING_RIGHT_UP_TAG, new ConfigMap(4, ActionConfig.PRIMARY));
+            configMap.put(FLING_LEFT_UP_TAG, new ConfigMap(4, ActionConfig.SECOND));
         }
 
         public static final String FLING_CONFIG_DEFAULT =
@@ -363,9 +367,9 @@ public class ActionConstants {
               + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // double tap
 
               + dl(LEFT_TAP_TAG)
-              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)
+              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // short tap
+              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // long press
+              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // double tap
 
               + dl(RIGHT_FLING_TAG)
               + dl(SystemAction.Overview.mAction)     + dl(SystemAction.Overview.mLabelRes)    + dl(EMPTY)  // short fling
@@ -373,8 +377,13 @@ public class ActionConstants {
               + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // super fling?
 
               + dl(LEFT_FLING)
-              + dl(SystemAction.Back.mAction)         + dl(SystemAction.Back.mLabelRes)        + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)
+              + dl(SystemAction.Back.mAction)         + dl(SystemAction.Back.mLabelRes)        + dl(EMPTY)  // short fling
+              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // long fling
+              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // super fling?
+
+              + dl(UP_FLING)
+              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // right side (short fling only)
+              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // left side (short fling only)
               + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + EMPTY;
 
         @Override
