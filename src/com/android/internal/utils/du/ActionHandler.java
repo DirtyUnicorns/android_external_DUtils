@@ -140,6 +140,7 @@ public class ActionHandler {
         Assistant(SYSTEMUI_TASK_ASSIST, SYSTEMUI, "label_action_search_assistant", "ic_sysbar_assist"),
         GoogleNowOnTap(SYSTEMUI_TASK_GOOGLE_NOW_ON_TAP, SYSTEMUI, "label_action_google_now_on_tap", "ic_sysbar_google_now_on_tap"),
         VoiceSearch(SYSTEMUI_TASK_VOICE_SEARCH, SYSTEMUI, "label_action_voice_search", "ic_sysbar_search"),
+        InAppSearch(SYSTEMUI_TASK_APP_SEARCH, SYSTEMUI, "label_action_in_app_search", "ic_sysbar_in_app_search"),
         Flashlight(SYSTEMUI_TASK_TORCH, SYSTEMUI, "label_action_flashlight", "ic_sysbar_torch"),
         Bluetooth(SYSTEMUI_TASK_BT, SYSTEMUI, "label_action_bluetooth", "ic_sysbar_bt"),
         WiFi(SYSTEMUI_TASK_WIFI, SYSTEMUI, "label_action_wifi", "ic_sysbar_wifi"),
@@ -190,7 +191,8 @@ public class ActionHandler {
             SystemAction.Home, SystemAction.ExpandedDesktop,
             SystemAction.Screenrecord, SystemAction.Ime,
             SystemAction.StopScreenPinning, SystemAction.ImeArrowDown,
-            SystemAction.ImeArrowLeft, SystemAction.ImeArrowRight, SystemAction.ImeArrowUp
+            SystemAction.ImeArrowLeft, SystemAction.ImeArrowRight,
+            SystemAction.ImeArrowUp, SystemAction.InAppSearch
     };
 
     public static class ActionIconResources {
