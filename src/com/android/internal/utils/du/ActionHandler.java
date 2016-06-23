@@ -122,6 +122,7 @@ public class ActionHandler {
     public static final String SYSTEMUI_TASK_SOUNDMODE_VIB_SILENT = "task_soundmode_vib_silent";
     public static final String SYSTEMUI_TASK_WAKE_DEVICE = "task_wake_device";
     public static final String SYSTEMUI_TASK_STOP_SCREENPINNING = "task_stop_screenpinning";
+    public static final String SYSTEMUI_TASK_VOLUME_PANEL = "task_volume_panel";
 
     public static final String INTENT_SHOW_POWER_MENU = "action_handler_show_power_menu";
     public static final String INTENT_TOGGLE_SCREENRECORD = "action_handler_toggle_screenrecord";
@@ -156,7 +157,8 @@ public class ActionHandler {
         ImeArrowDown(SYSTEMUI_TASK_IME_NAVIGATION_DOWN, SYSTEMUI, "label_action_ime_down", "ic_sysbar_ime_down"),
         ImeArrowLeft(SYSTEMUI_TASK_IME_NAVIGATION_LEFT, SYSTEMUI, "label_action_ime_left", "ic_sysbar_ime_left"),
         ImeArrowRight(SYSTEMUI_TASK_IME_NAVIGATION_RIGHT, SYSTEMUI, "label_action_ime_right", "ic_sysbar_ime_right"),
-        ImeArrowUp(SYSTEMUI_TASK_IME_NAVIGATION_UP, SYSTEMUI, "label_action_ime_up", "ic_sysbar_ime_up");
+        ImeArrowUp(SYSTEMUI_TASK_IME_NAVIGATION_UP, SYSTEMUI, "label_action_ime_up", "ic_sysbar_ime_up"),
+        VolumePanel(SYSTEMUI_TASK_VOLUME_PANEL, SYSTEMUI, "label_action_volume_panel", "ic_sysbar_volume_panel");
 
         String mAction;
         String mResPackage;
@@ -192,7 +194,8 @@ public class ActionHandler {
             SystemAction.Screenrecord, SystemAction.Ime,
             SystemAction.StopScreenPinning, SystemAction.ImeArrowDown,
             SystemAction.ImeArrowLeft, SystemAction.ImeArrowRight,
-            SystemAction.ImeArrowUp, SystemAction.InAppSearch
+            SystemAction.ImeArrowUp, SystemAction.InAppSearch,
+            SystemAction.VolumePanel
     };
 
     public static class ActionIconResources {
@@ -565,6 +568,9 @@ public class ActionHandler {
                 }
             }
             return;
+        } else if (action.equals(SYSTEMUI_TASK_VOLUME_PANEL)) {
+            volumePanel(context);
+            return;
         }
     }
 
@@ -918,5 +924,10 @@ public class ActionHandler {
     private static void showPowerMenu(Context context) {
         context.sendBroadcastAsUser(new Intent(INTENT_SHOW_POWER_MENU), new UserHandle(
                 UserHandle.USER_ALL));
+    }
+
+    public static void volumePanel(Context context) {
+        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        am.adjustVolume(AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI);
     }
 }
