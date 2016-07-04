@@ -124,6 +124,7 @@ public class ActionHandler {
     public static final String SYSTEMUI_TASK_STOP_SCREENPINNING = "task_stop_screenpinning";
     public static final String SYSTEMUI_TASK_CLEAR_NOTIFICATIONS = "task_clear_notifications";
     public static final String SYSTEMUI_TASK_VOLUME_PANEL = "task_volume_panel";
+    public static final String SYSTEMUI_TASK_EDITING_SMARTBAR = "task_editing_smartbar";
 
     public static final String INTENT_SHOW_POWER_MENU = "action_handler_show_power_menu";
     public static final String INTENT_TOGGLE_SCREENRECORD = "action_handler_toggle_screenrecord";
@@ -160,7 +161,8 @@ public class ActionHandler {
         ImeArrowRight(SYSTEMUI_TASK_IME_NAVIGATION_RIGHT, SYSTEMUI, "label_action_ime_right", "ic_sysbar_ime_right"),
         ImeArrowUp(SYSTEMUI_TASK_IME_NAVIGATION_UP, SYSTEMUI, "label_action_ime_up", "ic_sysbar_ime_up"),
         ClearNotifications(SYSTEMUI_TASK_CLEAR_NOTIFICATIONS, SYSTEMUI, "label_action_clear_notifications", "ic_sysbar_clear_notifications"),
-        VolumePanel(SYSTEMUI_TASK_VOLUME_PANEL, SYSTEMUI, "label_action_volume_panel", "ic_sysbar_volume_panel");
+        VolumePanel(SYSTEMUI_TASK_VOLUME_PANEL, SYSTEMUI, "label_action_volume_panel", "ic_sysbar_volume_panel"),
+        EditingSmartbar(SYSTEMUI_TASK_EDITING_SMARTBAR, SYSTEMUI, "label_action_editing_smartbar", "ic_sysbar_editing_smartbar");
 
         String mAction;
         String mResPackage;
@@ -197,7 +199,8 @@ public class ActionHandler {
             SystemAction.StopScreenPinning, SystemAction.ImeArrowDown,
             SystemAction.ImeArrowLeft, SystemAction.ImeArrowRight,
             SystemAction.ImeArrowUp, SystemAction.InAppSearch,
-            SystemAction.VolumePanel, SystemAction.ClearNotifications
+            SystemAction.VolumePanel, SystemAction.ClearNotifications,
+            SystemAction.EditingSmartbar
     };
 
     public static class ActionIconResources {
@@ -586,6 +589,9 @@ public class ActionHandler {
         } else if (action.equals(SYSTEMUI_TASK_VOLUME_PANEL)) {
             volumePanel(context);
             return;
+        } else if (action.equals(SYSTEMUI_TASK_EDITING_SMARTBAR)) {
+            editingSmartbar(context);
+            return;
         }
     }
 
@@ -944,5 +950,9 @@ public class ActionHandler {
     public static void volumePanel(Context context) {
         AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         am.adjustVolume(AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI);
+    }
+    public static void editingSmartbar(Context context) {
+        context.sendBroadcastAsUser(new Intent("intent_navbar_edit"), new UserHandle(
+                UserHandle.USER_ALL));
     }
 }
