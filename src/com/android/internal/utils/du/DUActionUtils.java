@@ -27,9 +27,12 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.content.res.ThemeConfig;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 //import android.content.res.ThemeConfig;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -45,9 +48,11 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.IWindowManager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.WindowManagerGlobal;
 
 import java.io.FileNotFoundException;
@@ -105,14 +110,7 @@ public final class DUActionUtils {
     }
 
     public static boolean navigationBarCanMove() {
-        boolean canMove = false;
-        try {
-            IWindowManager windowService = IWindowManager.Stub.asInterface(
-                    ServiceManager.getService("window"));
-            canMove = windowService.navigationBarCanMove();
-        } catch (Exception e) {
-        }
-        return canMove;
+        return Resources.getSystem().getConfiguration().smallestScreenWidthDp < 600;
     }
 
     public static boolean hasNavbarByDefault(Context context) {
@@ -451,8 +449,14 @@ public final class DUActionUtils {
 
     public static Drawable getDrawable(Context context, Uri uri) {
         try {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+            options.inScreenDensity = metrics.densityDpi;
+            options.inTargetDensity = metrics.densityDpi;
+            options.inDensity = DisplayMetrics.DENSITY_DEFAULT;
             InputStream inputStream = context.getContentResolver().openInputStream(uri);
-            return Drawable.createFromStream(inputStream, uri.toString());
+            Bitmap b1 = BitmapFactory.decodeStream(inputStream, null, options);
+            return new BitmapDrawable(context.getResources(), b1);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return null;
@@ -620,6 +624,9 @@ public final class DUActionUtils {
         if (context == null || defRes == null || drawableName == null)
             return null;
 
+        // TODO: turn on cmte support when it comes back
+        return getDrawable(defRes, drawableName, PACKAGE_SYSTEMUI);
+/*
         ThemeConfig themeConfig = context.getResources().getConfiguration().themeConfig;
 
         Drawable d = null;
@@ -654,5 +661,6 @@ public final class DUActionUtils {
             d = getDrawable(defRes, drawableName, PACKAGE_SYSTEMUI);
         }
         return d;
+        */
     }
 }
