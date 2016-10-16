@@ -881,6 +881,9 @@ public class ActionHandler {
                                         && !pkg.equals("com.google.android.gms")
                                         && !pkg.equals("com.google.android.ext.services")
                                         && !pkg.equals("android.ext.services")
+                                        && !pkg.equals("net.nurik.roman.muzei")
+                                        && !pkg.equals("com.touchtype.swiftkey")
+                                    	&& !pkg.equals("net.dinglisch.android.taskerm")
                                         && !isPackageLiveWalls(context, pkg)) {
                                     try {
                                         ApplicationInfo applicationInfo = context
