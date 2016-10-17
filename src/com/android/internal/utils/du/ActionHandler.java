@@ -645,11 +645,7 @@ public class ActionHandler {
         ActivityManager.RunningTaskInfo lastTask = getLastTask(context, am);
 
         if (lastTask != null) {
-            final ActivityOptions opts = ActivityOptions.makeCustomAnimation(context,
-                    DUActionUtils.getIdentifier(context, "last_app_in", "anim", DUActionUtils.PACKAGE_SYSTEMUI),
-                    DUActionUtils.getIdentifier(context, "last_app_out", "anim", DUActionUtils.PACKAGE_SYSTEMUI));
-            am.moveTaskToFront(lastTask.id, ActivityManager.MOVE_TASK_NO_USER_ACTION,
-                    opts.toBundle());
+            am.moveTaskToFront(lastTask.id, ActivityManager.MOVE_TASK_NO_USER_ACTION);
         }
     }
 
