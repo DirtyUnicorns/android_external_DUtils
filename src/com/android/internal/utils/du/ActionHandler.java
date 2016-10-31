@@ -27,6 +27,8 @@ import android.app.ActivityOptions;
 import android.app.IActivityManager;
 import android.app.SearchManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
@@ -67,6 +69,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -851,68 +854,77 @@ public class ActionHandler {
 
     private static void killProcess(Context context) {
         if (context.checkCallingOrSelfPermission(android.Manifest.permission.FORCE_STOP_PACKAGES) == PackageManager.PERMISSION_GRANTED
-                && !isLockTaskOn()) {
+            && context.checkCallingOrSelfPermission(android.Manifest.permission.FORCE_STOP_PACKAGES) == PackageManager.PERMISSION_GRANTED
+            && !isLockTaskOn()) {
             try {
+                PackageManager packageManager = context.getPackageManager();
                 final Intent intent = new Intent(Intent.ACTION_MAIN);
                 String defaultHomePackage = "com.android.launcher";
                 intent.addCategory(Intent.CATEGORY_HOME);
-                final ResolveInfo res = context.getPackageManager()
-                        .resolveActivity(intent, 0);
+                final ResolveInfo res = packageManager.resolveActivity(intent, 0);
                 if (res.activityInfo != null
                         && !res.activityInfo.packageName.equals("android")) {
                     defaultHomePackage = res.activityInfo.packageName;
                 }
-                IActivityManager am = ActivityManagerNative.getDefault();
-                String pkgName;
-                List<RunningAppProcessInfo> apps = am.getRunningAppProcesses();
-                for (RunningAppProcessInfo appInfo : apps) {
-                    int uid = appInfo.uid;
-                    // Make sure it's a foreground user application (not system,
-                    // root, phone, etc.)
-                    if (uid >= Process.FIRST_APPLICATION_UID
-                            && uid <= Process.LAST_APPLICATION_UID
-                            && appInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                        if (appInfo.pkgList != null
-                                && (appInfo.pkgList.length > 0)) {
-                            for (String pkg : appInfo.pkgList) {
-                                if (!pkg.equals("com.android.systemui")
-                                        && !pkg.equals(defaultHomePackage)
-                                        && !pkg.equals("com.google.android.googlequicksearchbox")
-                                        && !pkg.equals("com.google.android.gms")
-                                        && !pkg.equals("com.google.android.ext.services")
-                                        && !pkg.equals("android.ext.services")
-                                        && !pkg.equals("net.nurik.roman.muzei")
-                                        && !pkg.equals("com.touchtype.swiftkey")
-                                    	&& !pkg.equals("net.dinglisch.android.taskerm")
-                                        && !isPackageLiveWalls(context, pkg)) {
-                                    try {
-                                        ApplicationInfo applicationInfo = context
-                                                .getPackageManager().getPackageInfo(pkg, 0).applicationInfo;
-                                        pkgName = applicationInfo.loadLabel(
-                                                context.getPackageManager()).toString();
-                                    } catch (Exception e) {
-                                        // cheat just a little, highly unlikely event
-                                        pkgName = "App";
-                                    }
-                                    am.forceStopPackage(pkg,
-                                            UserHandle.USER_CURRENT);
-                                    Resources systemUIRes = DUActionUtils.getResourcesForPackage(context, DUActionUtils.PACKAGE_SYSTEMUI);
-                                    int ident = systemUIRes.getIdentifier("app_killed_message", DUActionUtils.STRING, DUActionUtils.PACKAGE_SYSTEMUI);
-                                    String toastMsg = systemUIRes.getString(ident, pkgName);
-                                    Toast.makeText(context, toastMsg, Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                            }
-                        } else {
-                            pkgName = appInfo.processName;
-                            Process.killProcess(appInfo.pid);
-                            Resources systemUIRes = DUActionUtils.getResourcesForPackage(context, DUActionUtils.PACKAGE_SYSTEMUI);
-                            int ident = systemUIRes.getIdentifier("app_killed_message", DUActionUtils.STRING, DUActionUtils.PACKAGE_SYSTEMUI);
-                            String toastMsg = systemUIRes.getString(ident, pkgName);
-                            Toast.makeText(context, toastMsg, Toast.LENGTH_SHORT).show();
-                            return;
+
+                // Use UsageStats to determine foreground app
+                UsageStatsManager usageStatsManager = (UsageStatsManager)
+                    context.getSystemService(Context.USAGE_STATS_SERVICE);
+                long current = System.currentTimeMillis();
+                long past = current - (1000 * 60 * 60); // uses snapshot of usage over past 60 minutes
+
+                // Get the list, then sort it chronilogically so most recent usage is at start of list
+                List<UsageStats> recentApps = usageStatsManager.queryUsageStats(
+                    UsageStatsManager.INTERVAL_DAILY, past, current);
+                Collections.sort(recentApps, new Comparator<UsageStats>() {
+                    @Override
+                    public int compare(UsageStats lhs, UsageStats rhs) {
+                        long timeLHS = lhs.getLastTimeUsed();
+                        long timeRHS = rhs.getLastTimeUsed();
+                        if (timeLHS > timeRHS) {
+                            return -1;
+                        } else if (timeLHS < timeRHS) {
+                            return 1;
                         }
+                        return 0;
                     }
+                });
+
+                IActivityManager am = ActivityManagerNative.getDefault();
+                // this may not be needed due to !isLockTaskOn() in entry if
+                //if (am.getLockTaskModeState() != ActivityManager.LOCK_TASK_MODE_NONE) return;
+
+                // Look for most recent usagestat with lastevent == 1 and grab package name
+                // ...this seems to map to the UsageEvents.Event.MOVE_TO_FOREGROUND
+                String pkg = null;
+                for (int i = 0; i < recentApps.size(); i++) {
+                    UsageStats mostRecent = recentApps.get(i);
+                    if (mostRecent.mLastEvent == 1) {
+                        pkg = mostRecent.mPackageName;
+                        break;
+                    }
+                }
+
+                if (pkg != null && !pkg.equals("com.android.systemui")
+                        && !pkg.equals(defaultHomePackage)) {
+                    am.forceStopPackage(pkg, UserHandle.USER_CURRENT);
+                    String pkgName;
+                    try {
+                        pkgName = (String) packageManager.getApplicationLabel(
+                            packageManager.getApplicationInfo(pkg, PackageManager.GET_META_DATA));
+                    } catch (PackageManager.NameNotFoundException e) {
+                        // Just use pkg if issues getting appName
+                        pkgName = pkg;
+                    }
+
+                    Resources systemUIRes = DUActionUtils.getResourcesForPackage(context, DUActionUtils.PACKAGE_SYSTEMUI);
+                    int ident = systemUIRes.getIdentifier("app_killed_message", DUActionUtils.STRING, DUActionUtils.PACKAGE_SYSTEMUI);
+                    String toastMsg = systemUIRes.getString(ident, pkgName);
+                    Toast.makeText(context, toastMsg, Toast.LENGTH_SHORT).show();
+                    return;
+                } else {
+                    // make a "didnt kill anything" toast?
+                    return;
                 }
             } catch (RemoteException remoteException) {
                 Log.d("ActionHandler", "Caller cannot kill processes, aborting");
