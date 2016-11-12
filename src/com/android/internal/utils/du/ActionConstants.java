@@ -559,7 +559,7 @@ public class ActionConstants {
 
               + dl(PIE_BUTTON4_TAG)
               + dl(SystemAction.Screenshot.mAction)         + dl(SystemAction.Screenshot.mLabelRes)          + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabelRes)            + dl(EMPTY)
+              + dl(SystemAction.RegionScreenshot.mAction)  + dl(SystemAction.RegionScreenshot.mLabelRes)  + dl(EMPTY)
               + dl(SystemAction.NoAction.mAction)           + dl(SystemAction.NoAction.mLabelRes)            + dl(EMPTY)
 
               + dl(PIE_BUTTON5_TAG)
