@@ -44,6 +44,7 @@ import android.hardware.input.InputManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.media.session.MediaSessionLegacyHelper;
+import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -802,6 +803,9 @@ public class ActionHandler {
     private static void toggleWifiAP(Context context) {
         final ContentResolver cr = context.getContentResolver();
         WifiManager wm = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        final ConnectivityManager mConnectivityManager;
+        mConnectivityManager = (ConnectivityManager) context.getSystemService(
+                Context.CONNECTIVITY_SERVICE);
         int state = wm.getWifiApState();
         boolean enabled = false;
         switch (state) {
@@ -814,33 +818,24 @@ public class ActionHandler {
                 enabled = true;
                 break;
         }
-        /**
-         * Disable Wifi if enabling tethering
-         */
-        int wifiState = wm.getWifiState();
-        if (enabled && ((wifiState == WifiManager.WIFI_STATE_ENABLING) ||
-                (wifiState == WifiManager.WIFI_STATE_ENABLED))) {
-            wm.setWifiEnabled(false);
-            Settings.Global.putInt(cr, Settings.Global.WIFI_SAVED_STATE, 1);
-        }
 
         // Turn on the Wifi AP
-        wm.setWifiApEnabled(null, enabled);
+        if (enabled) {
+            OnStartTetheringCallback callback = new OnStartTetheringCallback();
+            mConnectivityManager.startTethering(
+                    ConnectivityManager.TETHERING_WIFI, false, callback);
+        } else {
+            mConnectivityManager.stopTethering(ConnectivityManager.TETHERING_WIFI);
+        }
+    }
 
-        /**
-         * If needed, restore Wifi on tether disable
-         */
-        if (!enabled) {
-            int wifiSavedState = 0;
-            try {
-                wifiSavedState = Settings.Global.getInt(cr, Settings.Global.WIFI_SAVED_STATE);
-            } catch (Settings.SettingNotFoundException e) {
-                // Do nothing here
-            }
-            if (wifiSavedState == 1) {
-                wm.setWifiEnabled(true);
-                Settings.Global.putInt(cr, Settings.Global.WIFI_SAVED_STATE, 0);
-            }
+    static final class OnStartTetheringCallback extends
+            ConnectivityManager.OnStartTetheringCallback {
+        @Override
+        public void onTetheringStarted() {}
+        @Override
+        public void onTetheringFailed() {
+          // TODO: Show error.
         }
     }
 
