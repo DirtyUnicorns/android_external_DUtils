@@ -13,18 +13,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * ActionConstants.java: A helper class to assist Config.java with loading
  * and assigning default feature configurations. Nested classes implement
  * the static interface Defaults, which allows Settings and Config.java
  * to handle configurations in a non-implementation specific way, allowing
  * for more generalized code structures.
- * 
+ *
  * Of strong importance is the ConfigMap pojo class. Current settings use
  * a ActionPreference which sets a single action. Therefore, we must have a
  * way to map individual actions to their associated buttons. ActionPreference
  * key MUST match the tag associated with the target ConfigMap.
- * 
+ *
  */
 
 package com.android.internal.utils.du;
@@ -101,7 +101,7 @@ public class ActionConstants {
                 dl(SMARTBAR_DEF_BUTTONS)                                                              // default number of ButtonConfig
               + dl(BUTTON1_TAG)                                                                     // button tag
               + dl(SystemAction.Back.mAction)       + dl(SystemAction.Back.mLabelRes)     + dl(EMPTY)  // single tap (PRIMARY)
-              + dl(SystemAction.NoAction.mAction)    + dl(SystemAction.NoAction.mLabelRes)  + dl(EMPTY)  // long press (SECOND)
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes)  + dl(EMPTY)  // long press (SECOND)
               + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + dl(EMPTY)  // double tap (THIRD)
 
               + dl(BUTTON2_TAG)
@@ -111,8 +111,8 @@ public class ActionConstants {
 
               + dl(BUTTON3_TAG)
               + dl(SystemAction.Overview.mAction)   + dl(SystemAction.Overview.mLabelRes) + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)    + dl(SystemAction.NoAction.mLabelRes)  + dl(EMPTY)
-              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + EMPTY;
+              + dl(SystemAction.SplitScreen.mAction)    + dl(SystemAction.SplitScreen.mLabelRes)  + dl(EMPTY)
+              + dl(SystemAction.LastApp.mAction)   + dl(SystemAction.LastApp.mLabelRes) + EMPTY;
 /*
               + dl(BUTTON4_TAG)
               + dl(SystemAction.ExpandedDesktop.mAction)       + dl(SystemAction.ExpandedDesktop.mLabelRes)     + dl(EMPTY)
@@ -491,7 +491,7 @@ public class ActionConstants {
         public Bundle getConfigs(Context context) {
             // TODO Auto-generated method stub
             return null;
-        }        
+        }
     }
 
     public static class PieSecond implements Defaults {
@@ -598,7 +598,7 @@ public class ActionConstants {
             // TODO Auto-generated method stub
             return null;
         }
-        
+
     }
 
     private static Bundle loadConfigsFromMap(Context ctx, Map<String, ConfigHolder> configMap) {
