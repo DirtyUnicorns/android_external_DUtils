@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 The TeamEos Project
- * Copyright (C) 2016 The DirtyUnicorns Project
+ * Copyright (C) 2016-2017 The DirtyUnicorns Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,6 +132,8 @@ public class ActionHandler {
     public static final String SYSTEMUI_TASK_VOLUME_PANEL = "task_volume_panel";
     public static final String SYSTEMUI_TASK_EDITING_SMARTBAR = "task_editing_smartbar";
     public static final String SYSTEMUI_TASK_SPLIT_SCREEN = "task_split_screen";
+    public static final String SYSTEMUI_TASK_ONE_HANDED_MODE_LEFT = "task_one_handed_mode_left";
+    public static final String SYSTEMUI_TASK_ONE_HANDED_MODE_RIGHT = "task_one_handed_mode_right";
 
     public static final String INTENT_SHOW_POWER_MENU = "action_handler_show_power_menu";
     public static final String INTENT_TOGGLE_SCREENRECORD = "action_handler_toggle_screenrecord";
@@ -172,7 +174,9 @@ public class ActionHandler {
         ClearNotifications(SYSTEMUI_TASK_CLEAR_NOTIFICATIONS, SYSTEMUI, "label_action_clear_notifications", "ic_sysbar_clear_notifications"),
         VolumePanel(SYSTEMUI_TASK_VOLUME_PANEL, SYSTEMUI, "label_action_volume_panel", "ic_sysbar_volume_panel"),
         EditingSmartbar(SYSTEMUI_TASK_EDITING_SMARTBAR, SYSTEMUI, "label_action_editing_smartbar", "ic_sysbar_editing_smartbar"),
-        SplitScreen(SYSTEMUI_TASK_SPLIT_SCREEN, SYSTEMUI, "label_action_split_screen", "ic_sysbar_docked");
+        SplitScreen(SYSTEMUI_TASK_SPLIT_SCREEN, SYSTEMUI, "label_action_split_screen", "ic_sysbar_docked"),
+        OneHandedModeLeft(SYSTEMUI_TASK_ONE_HANDED_MODE_LEFT, SYSTEMUI, "label_action_one_handed_mode_left", "ic_sysbar_one_handed_mode"),
+        OneHandedModeRight(SYSTEMUI_TASK_ONE_HANDED_MODE_RIGHT, SYSTEMUI, "label_action_one_handed_mode_right", "ic_sysbar_one_handed_mode");
 
         String mAction;
         String mResPackage;
@@ -211,7 +215,8 @@ public class ActionHandler {
             SystemAction.ImeArrowUp, SystemAction.InAppSearch,
             SystemAction.VolumePanel, SystemAction.ClearNotifications,
             SystemAction.EditingSmartbar, SystemAction.SplitScreen,
-            SystemAction.RegionScreenshot
+            SystemAction.RegionScreenshot, SystemAction.OneHandedModeLeft,
+            SystemAction.OneHandedModeRight
     };
 
     public static class ActionIconResources {
@@ -626,6 +631,12 @@ public class ActionHandler {
         } else if (action.equals(SYSTEMUI_TASK_SPLIT_SCREEN)) {
             StatusBarHelper.splitScreen();
             return;
+        } else if (action.equals(SYSTEMUI_TASK_ONE_HANDED_MODE_LEFT)) {
+            toggleOneHandedMode(context, "left");
+            return;
+        } else if (action.equals(SYSTEMUI_TASK_ONE_HANDED_MODE_RIGHT)) {
+            toggleOneHandedMode(context, "right");
+            return;
         }
     }
 
@@ -1011,5 +1022,14 @@ public class ActionHandler {
     public static void editingSmartbar(Context context) {
         context.sendBroadcastAsUser(new Intent("intent_navbar_edit"), new UserHandle(
                 UserHandle.USER_ALL));
+    }
+
+    private static void toggleOneHandedMode(Context context, String direction) {
+        String str = Settings.Global.getString(context.getContentResolver(), Settings.Global.SINGLE_HAND_MODE);
+
+        if (TextUtils.isEmpty(str))
+            Settings.Global.putString(context.getContentResolver(), Settings.Global.SINGLE_HAND_MODE, direction);
+        else
+            Settings.Global.putString(context.getContentResolver(), Settings.Global.SINGLE_HAND_MODE, "");
     }
 }
