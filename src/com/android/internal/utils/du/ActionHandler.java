@@ -175,8 +175,8 @@ public class ActionHandler {
         VolumePanel(SYSTEMUI_TASK_VOLUME_PANEL, SYSTEMUI, "label_action_volume_panel", "ic_sysbar_volume_panel"),
         EditingSmartbar(SYSTEMUI_TASK_EDITING_SMARTBAR, SYSTEMUI, "label_action_editing_smartbar", "ic_sysbar_editing_smartbar"),
         SplitScreen(SYSTEMUI_TASK_SPLIT_SCREEN, SYSTEMUI, "label_action_split_screen", "ic_sysbar_docked"),
-        OneHandedModeLeft(SYSTEMUI_TASK_ONE_HANDED_MODE_LEFT, SYSTEMUI, "label_action_one_handed_mode_left", "ic_sysbar_one_handed_mode"),
-        OneHandedModeRight(SYSTEMUI_TASK_ONE_HANDED_MODE_RIGHT, SYSTEMUI, "label_action_one_handed_mode_right", "ic_sysbar_one_handed_mode");
+        OneHandedModeLeft(SYSTEMUI_TASK_ONE_HANDED_MODE_LEFT, SYSTEMUI, "label_action_one_handed_mode_left", "ic_sysbar_one_handed_mode_left"),
+        OneHandedModeRight(SYSTEMUI_TASK_ONE_HANDED_MODE_RIGHT, SYSTEMUI, "label_action_one_handed_mode_right", "ic_sysbar_one_handed_mode_right");
 
         String mAction;
         String mResPackage;
