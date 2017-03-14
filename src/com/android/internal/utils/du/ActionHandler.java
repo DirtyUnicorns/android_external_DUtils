@@ -908,7 +908,7 @@ public class ActionHandler {
                     }
                 });
 
-                IActivityManager am = ActivityManagerNative.getDefault();
+                IActivityManager iam = ActivityManagerNative.getDefault();
                 // this may not be needed due to !isLockTaskOn() in entry if
                 //if (am.getLockTaskModeState() != ActivityManager.LOCK_TASK_MODE_NONE) return;
 
@@ -925,7 +925,26 @@ public class ActionHandler {
 
                 if (pkg != null && !pkg.equals("com.android.systemui")
                         && !pkg.equals(defaultHomePackage)) {
-                    am.forceStopPackage(pkg, UserHandle.USER_CURRENT);
+                    iam.forceStopPackage(pkg, UserHandle.USER_CURRENT);
+
+                    final ActivityManager am = (ActivityManager)
+                            context.getSystemService(Context.ACTIVITY_SERVICE);
+                    final List<ActivityManager.RecentTaskInfo> recentTasks =
+                            am.getRecentTasksForUser(ActivityManager.getMaxRecentTasksStatic(),
+                            ActivityManager.RECENT_IGNORE_HOME_STACK_TASKS
+                                    | ActivityManager.RECENT_INGORE_PINNED_STACK_TASKS
+                                    | ActivityManager.RECENT_IGNORE_UNAVAILABLE
+                                    | ActivityManager.RECENT_INCLUDE_PROFILES,
+                                    UserHandle.CURRENT.getIdentifier());
+                    final int size = recentTasks.size();
+                    for (int i = 0; i < size; i++) {
+                        ActivityManager.RecentTaskInfo recentInfo = recentTasks.get(i);
+                        if (recentInfo.baseIntent.getComponent().getPackageName().equals(pkg)) {
+                            int taskid = recentInfo.persistentId;
+                            am.removeTask(taskid);
+                        }
+                    }
+
                     String pkgName;
                     try {
                         pkgName = (String) packageManager.getApplicationLabel(
