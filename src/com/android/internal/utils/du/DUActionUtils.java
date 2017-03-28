@@ -84,6 +84,9 @@ public final class DUActionUtils {
     public static final String STRING = "string";
     public static final String ANIM = "anim";
 
+    public static final int DUI_ICON_MAX_WIDTH = 512;
+    public static final int DUI_ICON_MAX_HEIGHT = 512;
+
     // 10 inch tablets
     public static boolean isXLargeScreen() {
         int screenLayout = Resources.getSystem().getConfiguration().screenLayout &
@@ -451,75 +454,106 @@ public final class DUActionUtils {
     public static Drawable getDrawable(Context context, Uri uri) {
         //set inputs here so we can clean up them in the finally
         InputStream inputStream = null;
+
         try {
-            //get the inputstream
-            inputStream = context.getContentResolver().openInputStream(uri);
+          //get the inputstream
+          inputStream = context.getContentResolver().openInputStream(uri);
 
-            //get available bitmapfactory options
+          //get available bitmapfactory options
+          BitmapFactory.Options options = new BitmapFactory.Options();
+          //query the bitmap to decode the stream but don't allocate pixels in memory yet
+          options.inJustDecodeBounds = true;
+          //decode the bitmap with calculated bounds
+          Bitmap b1 = BitmapFactory.decodeStream(inputStream, null, options);
+          //get raw height and width of the bitmap
+          int rawHeight = options.outHeight;
+          int rawWidth = options.outWidth;
+
+          //check if the bitmap is big and we need to scale the quality to take less memory
+          options.inSampleSize = calculateInSampleSize(options, rawHeight, rawWidth);
+
+          //We need to close and load again the inputstream to avoid null
+          try {
+              inputStream.close();
+          }
+          catch (IOException e) {
+              e.printStackTrace();
+          }
+          inputStream = context.getContentResolver().openInputStream(uri);
+
+          //decode the stream again, with the calculated SampleSize option,
+          //and allocate the memory. Also add some metrics options to take a proper density
+          options.inJustDecodeBounds = false;
+          DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+          options.inScreenDensity = metrics.densityDpi;
+          options.inTargetDensity = metrics.densityDpi;
+          options.inDensity = DisplayMetrics.DENSITY_DEFAULT;
+          b1 = BitmapFactory.decodeStream(inputStream, null, options);
+          return new BitmapDrawable(context.getResources(), b1);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        //clean up the system resources
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    //Automate the quality scaling process
+    public static int calculateInSampleSize(BitmapFactory.Options options, int height, int width) {
+        //set default inSampleSize scale factor (no scaling)
+        int inSampleSize = 1;
+
+        //if img size is in 257-512 range, sample scale factor will be 4x
+        if (height > 256 || width > 256) {
+            inSampleSize = 4;
+            return inSampleSize;
+        //if img size is in 129-256 range, sample scale factor will be 2x
+        } else if (height > 128 || width > 128) {
+            inSampleSize = 2;
+            return inSampleSize;
+        }
+        //if img size is in 0-128 range, no need to scale it
+        return inSampleSize;
+    }
+
+    /**
+     * Screen images based on desired dimensions before fully decoding
+     *
+     *@param ctx Calling context
+     *@param uri Image uri
+     *@param maxWidth maximum allowed image width
+     *@param maxHeight maximum allowed image height
+     */
+    public static boolean isBitmapAllowedSize(Context ctx, Uri uri, int maxWidth, int maxHeight) {
+        InputStream inputStream = null;
+        try {
+            inputStream = ctx.getContentResolver().openInputStream(uri);
             BitmapFactory.Options options = new BitmapFactory.Options();
-            //query the bitmap to decode the stream but don't allocate pixels in memory yet
             options.inJustDecodeBounds = true;
-            //decode the bitmap with calculated bounds
-            Bitmap b1 = BitmapFactory.decodeStream(inputStream, null, options);
-            //check if the bitmap is too big, if yes scale the quality
-            options.inSampleSize = calculateInSampleSize(options);
-
-            //We need to close and load again the inputstream to avoid null
+            BitmapFactory.decodeStream(inputStream, null, options);
+            if (options.outWidth <= maxWidth && options.outHeight <= maxHeight) {
+                return true;
+            }
+        } catch (Exception e) {
+            return false;
+        } finally {
             try {
                 inputStream.close();
             }
             catch (IOException e) {
                 e.printStackTrace();
             }
-            inputStream = context.getContentResolver().openInputStream(uri);
-
-            //decode the stream again, with the calculated SampleSize option, 
-            //and allocate the memory. Also add some metrics options to take a proper density
-            options.inJustDecodeBounds = false;
-            DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-            options.inScreenDensity = metrics.densityDpi;
-            options.inTargetDensity = metrics.densityDpi;
-            options.inDensity = DisplayMetrics.DENSITY_DEFAULT;
-            b1 = BitmapFactory.decodeStream(inputStream, null, options);
-            return new BitmapDrawable(context.getResources(), b1);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        //clean up the system resources
-        } finally {
-                if (inputStream != null) {
-                    try {
-                        inputStream.close();
-                    }
-                    catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-         }
-    }
-
-    //Automate the quality scaling process
-    public static int calculateInSampleSize(BitmapFactory.Options options) {
-        //we do not scale quality if size is not more than 512x512
-        final int reqHeight = 512;
-        final int reqWidth = 512;
-        // get raw height and width of image
-        int height = options.outHeight;
-        int width = options.outWidth;
-        //do not scale quality for now
-        int inSampleSize = 1;
-
-        // If the img is too big, calculate the largest inSampleSize value that is a power of 2
-        //  and keeps both height and width larger than the requested height and width.
-        if (height > reqHeight || width > reqWidth) {
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-            while ((halfHeight / inSampleSize) >= reqHeight
-                    && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2;
-            }
         }
-        return inSampleSize;
+        return false;
     }
 
     public static Drawable getDrawableFromComponent(PackageManager pm, String activity) {
