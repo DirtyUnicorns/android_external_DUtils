@@ -930,8 +930,18 @@ public class ActionHandler {
 
                 if (pkg != null && !pkg.equals("com.android.systemui")
                         && !pkg.equals(defaultHomePackage)) {
+
+                    // Restore home screen stack before killing the app
+                    Intent home = new Intent(Intent.ACTION_MAIN, null);
+                    home.addCategory(Intent.CATEGORY_HOME);
+                    home.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                    context.startActivity(home);
+
+                    // Kill the app
                     iam.forceStopPackage(pkg, UserHandle.USER_CURRENT);
 
+                    // Remove killed app from Recents
                     final ActivityManager am = (ActivityManager)
                             context.getSystemService(Context.ACTIVITY_SERVICE);
                     final List<ActivityManager.RecentTaskInfo> recentTasks =
