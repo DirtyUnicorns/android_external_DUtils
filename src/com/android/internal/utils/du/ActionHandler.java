@@ -61,9 +61,11 @@ import android.service.wallpaper.WallpaperService;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Slog;
+import android.view.IWindowManager;
 import android.view.InputDevice;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
+import android.view.WindowManagerGlobal;
 import android.view.WindowManagerPolicyControl;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -139,7 +141,6 @@ public class ActionHandler {
     public static final String INTENT_TOGGLE_SCREENRECORD = "action_handler_toggle_screenrecord";
     public static final String INTENT_SCREENSHOT = "action_handler_screenshot";
     public static final String INTENT_REGION_SCREENSHOT = "action_handler_region_screenshot";
-    public static final String INTENT_TOGGLE_FLASHLIGHT = "action_handler_toggle_flashlight";
 
     static enum SystemAction {
         NoAction(SYSTEMUI_TASK_NO_ACTION,  SYSTEMUI, "label_action_no_action", "ic_sysbar_no_action"),
@@ -315,6 +316,15 @@ public class ActionHandler {
             }
         }
 
+        private static void toggleFlashlight() {
+            IStatusBarService service = getStatusBarService();
+            try {
+                service.toggleFlashlight();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
         private static void toggleRecentsApps() {
             IStatusBarService service = getStatusBarService();
             if (service != null) {
@@ -464,13 +474,13 @@ public class ActionHandler {
             killProcess(context);
             return;
         } else if (action.equals(SYSTEMUI_TASK_SCREENSHOT)) {
-            takeScreenshot(context);
+            sendCommandToWindowManager(new Intent(INTENT_SCREENSHOT));
             return;
         } else if (action.equals(SYSTEMUI_TASK_REGION_SCREENSHOT)) {
-            takeRegionScreenshot(context);
+            sendCommandToWindowManager(new Intent(INTENT_REGION_SCREENSHOT));
             return;
         } else if (action.equals(SYSTEMUI_TASK_SCREENRECORD)) {
-            takeScreenrecord(context);
+            sendCommandToWindowManager(new Intent(INTENT_TOGGLE_SCREENRECORD));
             return;
             // } else if (action.equals(SYSTEMUI_TASK_AUDIORECORD)) {
             // takeAudiorecord();
@@ -494,10 +504,10 @@ public class ActionHandler {
             StatusBarHelper.fireGoogleNowOnTap();
             return;
         } else if (action.equals(SYSTEMUI_TASK_POWER_MENU)) {
-            showPowerMenu(context);
+            sendCommandToWindowManager(new Intent(INTENT_SHOW_POWER_MENU));
             return;
         } else if (action.equals(SYSTEMUI_TASK_TORCH)) {
-            toggleTorch(context);
+            StatusBarHelper.toggleFlashlight();
             return;
         } else if (action.equals(SYSTEMUI_TASK_CAMERA)) {
             launchCamera(context);
@@ -855,24 +865,13 @@ public class ActionHandler {
         }
     }
 
-    private static void toggleTorch(Context context) {
-        context.sendBroadcastAsUser(new Intent(INTENT_TOGGLE_FLASHLIGHT), new UserHandle(
-                UserHandle.USER_ALL));
-    }
-
-    private static void takeScreenshot(Context context) {
-        context.sendBroadcastAsUser(new Intent(INTENT_SCREENSHOT), new UserHandle(
-                UserHandle.USER_ALL));
-    }
-
-    private static void takeRegionScreenshot(Context context) {
-        context.sendBroadcastAsUser(new Intent(INTENT_REGION_SCREENSHOT), new UserHandle(
-                UserHandle.USER_ALL));
-    }
-
-    private static void takeScreenrecord(Context context) {
-        context.sendBroadcastAsUser(new Intent(INTENT_TOGGLE_SCREENRECORD), new UserHandle(
-                UserHandle.USER_ALL));
+    private static void sendCommandToWindowManager(Intent intent) {
+        IWindowManager wm = WindowManagerGlobal.getWindowManagerService();
+        try {
+            wm.sendCustomAction(intent);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void killProcess(Context context) {
@@ -1042,11 +1041,6 @@ public class ActionHandler {
         } catch (Exception e) {
         }
         return false;
-    }
-
-    private static void showPowerMenu(Context context) {
-        context.sendBroadcastAsUser(new Intent(INTENT_SHOW_POWER_MENU), new UserHandle(
-                UserHandle.USER_ALL));
     }
 
     public static void volumePanel(Context context) {
