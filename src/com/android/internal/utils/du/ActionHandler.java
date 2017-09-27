@@ -66,7 +66,7 @@ import android.view.InputDevice;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.WindowManagerGlobal;
-import android.view.WindowManagerPolicyControl;
+//import android.view.WindowManagerPolicyControl;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -74,8 +74,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.utils.du.Config.ActionConfig;
@@ -142,6 +144,18 @@ public class ActionHandler {
     public static final String INTENT_SCREENSHOT = "action_handler_screenshot";
     public static final String INTENT_REGION_SCREENSHOT = "action_handler_region_screenshot";
 
+    // remove actions from here as they come back on deck
+    static final Set<String> sDisabledActions = new HashSet<String>();
+    static {
+        sDisabledActions.add(SYSTEMUI_TASK_SCREENRECORD);
+        sDisabledActions.add(SYSTEMUI_TASK_EXPANDED_DESKTOP);
+        sDisabledActions.add(SYSTEMUI_TASK_ONE_HANDED_MODE_LEFT);
+        sDisabledActions.add(SYSTEMUI_TASK_ONE_HANDED_MODE_RIGHT);
+        // we need to make this more reliable when the user tap the partial screenshot button
+        // quickly and more times 
+        sDisabledActions.add(SYSTEMUI_TASK_REGION_SCREENSHOT);
+    }
+
     static enum SystemAction {
         NoAction(SYSTEMUI_TASK_NO_ACTION,  SYSTEMUI, "label_action_no_action", "ic_sysbar_no_action"),
         SettingsPanel(SYSTEMUI_TASK_SETTINGS_PANEL, SYSTEMUI, "label_action_settings_panel", "ic_sysbar_settings_panel"),
@@ -185,12 +199,14 @@ public class ActionHandler {
         String mResPackage;
         String mLabelRes;
         String mIconRes;
+        String mDarkIconRes;
 
         private SystemAction(String action, String resPackage, String labelRes,  String iconRes) {
             mAction = action;
             mResPackage = resPackage;
             mLabelRes = labelRes;
             mIconRes = iconRes;
+            mDarkIconRes = iconRes + "_dark";
         }
 
         private ActionConfig create(Context ctx) {
@@ -225,14 +241,18 @@ public class ActionHandler {
 
     public static class ActionIconResources {
         Drawable[] mDrawables;
+        Drawable[] mDarkDrawables;
         Map<String, Integer> mIndexMap;
 
         public ActionIconResources(Resources res) {
             mDrawables = new Drawable[systemActions.length];
+            mDarkDrawables = new Drawable[systemActions.length];
             mIndexMap = new HashMap<String, Integer>();
             for (int i = 0; i < systemActions.length; i++) {
                 mIndexMap.put(systemActions[i].mAction, i);
                 mDrawables[i] = DUActionUtils.getDrawable(res, systemActions[i].mIconRes,
+                        systemActions[i].mResPackage);
+                mDarkDrawables[i] = DUActionUtils.getDrawable(res, systemActions[i].mDarkIconRes,
                         systemActions[i].mResPackage);
             }
         }
@@ -241,11 +261,17 @@ public class ActionHandler {
             for (int i = 0; i < mDrawables.length; i++) {
                 mDrawables[i] = DUActionUtils.getDrawable(res, systemActions[i].mIconRes,
                         systemActions[i].mResPackage);
+                mDarkDrawables[i] = DUActionUtils.getDrawable(res, systemActions[i].mDarkIconRes,
+                        systemActions[i].mResPackage);
             }
         }
 
         public Drawable getActionDrawable(String action) {
             return mDrawables[mIndexMap.get(action)];
+        }
+
+        public Drawable getDarkActionDrawable(String action) {
+            return mDarkDrawables[mIndexMap.get(action)];
         }
     }
 
@@ -259,6 +285,9 @@ public class ActionHandler {
         for (int i = 0; i < systemActions.length; i++) {
             ActionConfig c = systemActions[i].create(context);
             String action = c.getAction();
+            if (sDisabledActions.contains(action)) {
+                continue;
+            }
             if (TextUtils.equals(action, SYSTEMUI_TASK_STOP_SCREENPINNING)
                     || TextUtils.equals(action, SYSTEMUI_TASK_IME_NAVIGATION_DOWN)
                     || TextUtils.equals(action, SYSTEMUI_TASK_IME_NAVIGATION_LEFT)
@@ -313,6 +342,26 @@ public class ActionHandler {
                     }
                 }
                 return mService;
+            }
+        }
+
+        private static void dispatchNavigationEditorResult(Intent intent) {
+            IStatusBarService service = getStatusBarService();
+            if (service != null) {
+                try {
+                    service.dispatchNavigationEditorResults(intent);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        private static void toggleNavigationEditor() {
+            IStatusBarService service = getStatusBarService();
+            try {
+                service.toggleNavigationEditor();
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
         }
 
@@ -455,9 +504,16 @@ public class ActionHandler {
         }
     }
 */
+    public static void dispatchNavigationEditorResult(Intent intent) {
+        StatusBarHelper.dispatchNavigationEditorResult(intent);
+    }
+
     public static void performTask(Context context, String action) {
         // null: throw it out
         if (action == null) {
+            return;
+        }
+        if (sDisabledActions.contains(action)) {
             return;
         }
         // not a system action, should be intent
@@ -485,7 +541,7 @@ public class ActionHandler {
             // } else if (action.equals(SYSTEMUI_TASK_AUDIORECORD)) {
             // takeAudiorecord();
         } else if (action.equals(SYSTEMUI_TASK_EXPANDED_DESKTOP)) {
-            toggleExpandedDesktop(context);
+            // toggleExpandedDesktop(context);
             return;
         } else if (action.equals(SYSTEMUI_TASK_SCREENOFF)) {
             screenOff(context);
@@ -641,16 +697,16 @@ public class ActionHandler {
             volumePanel(context);
             return;
         } else if (action.equals(SYSTEMUI_TASK_EDITING_SMARTBAR)) {
-            editingSmartbar(context);
+            StatusBarHelper.toggleNavigationEditor();
             return;
         } else if (action.equals(SYSTEMUI_TASK_SPLIT_SCREEN)) {
             StatusBarHelper.splitScreen();
             return;
         } else if (action.equals(SYSTEMUI_TASK_ONE_HANDED_MODE_LEFT)) {
-            toggleOneHandedMode(context, "left");
+//            toggleOneHandedMode(context, "left");
             return;
         } else if (action.equals(SYSTEMUI_TASK_ONE_HANDED_MODE_RIGHT)) {
-            toggleOneHandedMode(context, "right");
+//            toggleOneHandedMode(context, "right");
             return;
         }
     }
@@ -682,8 +738,15 @@ public class ActionHandler {
         ActivityManager.RunningTaskInfo lastTask = getLastTask(context, am);
 
         if (lastTask != null) {
-            am.moveTaskToFront(lastTask.id, ActivityManager.MOVE_TASK_NO_USER_ACTION);
+            am.moveTaskToFront(lastTask.id, ActivityManager.MOVE_TASK_NO_USER_ACTION,
+                    getAnimation(context).toBundle());
         }
+    }
+
+    private static ActivityOptions getAnimation(Context context) {
+        return ActivityOptions.makeCustomAnimation(context,
+                com.android.internal.R.anim.du_app_in,
+                com.android.internal.R.anim.du_app_out);
     }
 
     private static ActivityManager.RunningTaskInfo getLastTask(Context context,
@@ -719,7 +782,7 @@ public class ActionHandler {
         }
     }
 
-
+/*
     private static void toggleExpandedDesktop(Context context) {
         ContentResolver cr = context.getContentResolver();
         String newVal = "";
@@ -735,7 +798,7 @@ public class ActionHandler {
             WindowManagerPolicyControl.reloadFromSetting(context);
         }
     }
-
+*/
     private static void launchVoiceSearch(Context context) {
         sendCloseSystemWindows("assist");
         // launch the search activity
@@ -876,7 +939,6 @@ public class ActionHandler {
 
     private static void killProcess(Context context) {
         if (context.checkCallingOrSelfPermission(android.Manifest.permission.FORCE_STOP_PACKAGES) == PackageManager.PERMISSION_GRANTED
-            && context.checkCallingOrSelfPermission(android.Manifest.permission.FORCE_STOP_PACKAGES) == PackageManager.PERMISSION_GRANTED
             && !isLockTaskOn()) {
             try {
                 PackageManager packageManager = context.getPackageManager();
@@ -945,7 +1007,7 @@ public class ActionHandler {
                             context.getSystemService(Context.ACTIVITY_SERVICE);
                     final List<ActivityManager.RecentTaskInfo> recentTasks =
                             am.getRecentTasksForUser(ActivityManager.getMaxRecentTasksStatic(),
-                            ActivityManager.RECENT_IGNORE_HOME_STACK_TASKS
+                            ActivityManager.RECENT_IGNORE_HOME_AND_RECENTS_STACK_TASKS
                                     | ActivityManager.RECENT_INGORE_PINNED_STACK_TASKS
                                     | ActivityManager.RECENT_IGNORE_UNAVAILABLE
                                     | ActivityManager.RECENT_INCLUDE_PROFILES,
@@ -1029,7 +1091,6 @@ public class ActionHandler {
 
     public static void turnOffLockTask() {
         try {
-//            ActivityManagerNative.getDefault().stopLockTaskModeOnCurrent();
         	ActivityManagerNative.getDefault().stopLockTaskMode();
         } catch (Exception e) {
         }
@@ -1047,11 +1108,8 @@ public class ActionHandler {
         AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         am.adjustVolume(AudioManager.ADJUST_SAME, AudioManager.FLAG_SHOW_UI);
     }
-    public static void editingSmartbar(Context context) {
-        context.sendBroadcastAsUser(new Intent("intent_navbar_edit"), new UserHandle(
-                UserHandle.USER_ALL));
-    }
 
+/*
     private static void toggleOneHandedMode(Context context, String direction) {
         String str = Settings.Global.getString(context.getContentResolver(), Settings.Global.SINGLE_HAND_MODE);
 
@@ -1060,4 +1118,5 @@ public class ActionHandler {
         else
             Settings.Global.putString(context.getContentResolver(), Settings.Global.SINGLE_HAND_MODE, "");
     }
+    */
 }

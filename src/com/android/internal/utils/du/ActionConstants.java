@@ -112,7 +112,7 @@ public class ActionConstants {
               + dl(BUTTON3_TAG)
               + dl(SystemAction.Overview.mAction)   + dl(SystemAction.Overview.mLabelRes) + dl(EMPTY)
               + dl(SystemAction.SplitScreen.mAction)    + dl(SystemAction.SplitScreen.mLabelRes)  + dl(EMPTY)
-              + dl(SystemAction.LastApp.mAction)   + dl(SystemAction.LastApp.mLabelRes) + EMPTY;
+              + dl(SystemAction.NoAction.mAction)   + dl(SystemAction.NoAction.mLabelRes) + EMPTY;
 /*
               + dl(BUTTON4_TAG)
               + dl(SystemAction.ExpandedDesktop.mAction)       + dl(SystemAction.ExpandedDesktop.mLabelRes)     + dl(EMPTY)
@@ -363,13 +363,13 @@ public class ActionConstants {
                 dl(FLING_DEF_BUTTONS)
               + dl(RIGHT_TAP_TAG)
               + dl(SystemAction.Home.mAction)         + dl(SystemAction.Home.mLabelRes)        + dl(EMPTY)  // short tap
-              + dl(SystemAction.Menu.mAction)         + dl(SystemAction.Menu.mLabelRes)        + dl(EMPTY)  // long press
-              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // double tap
+              + dl(SystemAction.GoogleNowOnTap.mAction)         + dl(SystemAction.GoogleNowOnTap.mLabelRes)        + dl(EMPTY)  // long press
+              + dl(SystemAction.LastApp.mAction)     + dl(SystemAction.LastApp.mLabelRes)    + dl(EMPTY)  // double tap
 
               + dl(LEFT_TAP_TAG)
-              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // short tap
-              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // long press
-              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // double tap
+              + dl(SystemAction.Home.mAction)     + dl(SystemAction.Home.mLabelRes)    + dl(EMPTY)  // short tap
+              + dl(SystemAction.GoogleNowOnTap.mAction)     + dl(SystemAction.GoogleNowOnTap.mLabelRes)    + dl(EMPTY)  // long press
+              + dl(SystemAction.ScreenOff.mAction)     + dl(SystemAction.ScreenOff.mLabelRes)    + dl(EMPTY)  // double tap
 
               + dl(RIGHT_FLING_TAG)
               + dl(SystemAction.Overview.mAction)     + dl(SystemAction.Overview.mLabelRes)    + dl(EMPTY)  // short fling
@@ -382,8 +382,8 @@ public class ActionConstants {
               + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // super fling?
 
               + dl(UP_FLING)
-              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // right side (short fling only)
-              + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + dl(EMPTY)  // left side (short fling only)
+              + dl(SystemAction.SplitScreen.mAction)     + dl(SystemAction.SplitScreen.mLabelRes)    + dl(EMPTY)  // right side (short fling only)
+              + dl(SystemAction.SplitScreen.mAction)     + dl(SystemAction.SplitScreen.mLabelRes)    + dl(EMPTY)  // left side (short fling only)
               + dl(SystemAction.NoAction.mAction)     + dl(SystemAction.NoAction.mLabelRes)    + EMPTY;
 
         @Override

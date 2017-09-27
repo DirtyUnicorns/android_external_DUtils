@@ -43,6 +43,9 @@ public abstract class UserContentObserver extends ContentObserver {
         @Override
         public void onForegroundProfileSwitch(int newProfileId) {
         }
+        @Override
+        public void onLockedBootComplete(int val) {
+        }
     };
 
     private Handler mHandler;
