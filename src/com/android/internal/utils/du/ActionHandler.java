@@ -180,7 +180,7 @@ public class ActionHandler {
         Menu(SYSTEMUI_TASK_MENU, SYSTEMUI, "label_action_menu", "ic_sysbar_menu"),
         Back(SYSTEMUI_TASK_BACK, SYSTEMUI, "label_action_back", "ic_sysbar_back"),
         Home(SYSTEMUI_TASK_HOME, SYSTEMUI, "label_action_home", "ic_sysbar_home"),
-        Ime(SYSTEMUI_TASK_IME_SWITCHER, SYSTEMUI, "label_action_ime_switcher", "ic_ime_switcher_default"),
+        Ime(SYSTEMUI_TASK_IME_SWITCHER, SYSTEMUI, "label_action_ime_switcher", "ic_ime_switcher_smartbar"),
         StopScreenPinning(SYSTEMUI_TASK_STOP_SCREENPINNING, SYSTEMUI, "label_action_stop_screenpinning", "ic_smartbar_screen_pinning_off"),
         ImeArrowDown(SYSTEMUI_TASK_IME_NAVIGATION_DOWN, SYSTEMUI, "label_action_ime_down", "ic_sysbar_ime_down"),
         ImeArrowLeft(SYSTEMUI_TASK_IME_NAVIGATION_LEFT, SYSTEMUI, "label_action_ime_left", "ic_sysbar_ime_left"),
