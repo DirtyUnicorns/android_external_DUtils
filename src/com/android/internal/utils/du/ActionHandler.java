@@ -138,6 +138,7 @@ public class ActionHandler {
     public static final String SYSTEMUI_TASK_SPLIT_SCREEN = "task_split_screen";
     public static final String SYSTEMUI_TASK_ONE_HANDED_MODE_LEFT = "task_one_handed_mode_left";
     public static final String SYSTEMUI_TASK_ONE_HANDED_MODE_RIGHT = "task_one_handed_mode_right";
+    public static final String SYSTEMUI_TASK_ASSISTANT_SOUND_SEARCH = "task_assistant_sound_search";
 
     public static final String INTENT_SHOW_POWER_MENU = "action_handler_show_power_menu";
     public static final String INTENT_TOGGLE_SCREENRECORD = "action_handler_toggle_screenrecord";
@@ -193,7 +194,8 @@ public class ActionHandler {
         OneHandedModeLeft(SYSTEMUI_TASK_ONE_HANDED_MODE_LEFT, SYSTEMUI, "label_action_one_handed_mode_left", "ic_sysbar_one_handed_mode_left"),
         OneHandedModeRight(SYSTEMUI_TASK_ONE_HANDED_MODE_RIGHT, SYSTEMUI, "label_action_one_handed_mode_right", "ic_sysbar_one_handed_mode_right"),
         MediaArrowLeft(SYSTEMUI_TASK_MEDIA_PREVIOUS, SYSTEMUI, "label_action_media_left", "ic_skip_previous"),
-        MediaArrowRight(SYSTEMUI_TASK_MEDIA_NEXT, SYSTEMUI, "label_action_media_right", "ic_skip_next");
+        MediaArrowRight(SYSTEMUI_TASK_MEDIA_NEXT, SYSTEMUI, "label_action_media_right", "ic_skip_next"),
+        AssistantSoundSearch(SYSTEMUI_TASK_ASSISTANT_SOUND_SEARCH, SYSTEMUI, "label_action_assistant_sound_search", "ic_assistant_sound_search");
 
         String mAction;
         String mResPackage;
@@ -236,7 +238,7 @@ public class ActionHandler {
             SystemAction.EditingSmartbar, SystemAction.SplitScreen,
             SystemAction.RegionScreenshot, SystemAction.OneHandedModeLeft,
             SystemAction.OneHandedModeRight, SystemAction.MediaArrowLeft,
-            SystemAction.MediaArrowRight
+            SystemAction.MediaArrowRight, SystemAction.AssistantSoundSearch
     };
 
     public static class ActionIconResources {
@@ -708,6 +710,9 @@ public class ActionHandler {
         } else if (action.equals(SYSTEMUI_TASK_ONE_HANDED_MODE_RIGHT)) {
 //            toggleOneHandedMode(context, "right");
             return;
+        } else if (action.equals(SYSTEMUI_TASK_ASSISTANT_SOUND_SEARCH)) {
+            startAssistantSoundSearch(context);
+            return;
         }
     }
 
@@ -1119,4 +1124,10 @@ public class ActionHandler {
             Settings.Global.putString(context.getContentResolver(), Settings.Global.SINGLE_HAND_MODE, "");
     }
     */
+
+    public static void startAssistantSoundSearch(Context context) {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.setAction("com.google.android.googlequicksearchbox.MUSIC_SEARCH");
+        context.startActivity(intent);
+    }
 }
