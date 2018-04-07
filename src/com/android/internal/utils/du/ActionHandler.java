@@ -1037,7 +1037,8 @@ public class ActionHandler {
                     Resources systemUIRes = DUActionUtils.getResourcesForPackage(context, DUActionUtils.PACKAGE_SYSTEMUI);
                     int ident = systemUIRes.getIdentifier("app_killed_message", DUActionUtils.STRING, DUActionUtils.PACKAGE_SYSTEMUI);
                     String toastMsg = systemUIRes.getString(ident, pkgName);
-                    Toast.makeText(context, toastMsg, Toast.LENGTH_SHORT).show();
+                    Context ctx = getPackageContext(context, DUActionUtils.PACKAGE_SYSTEMUI);
+                    Toast.makeText(ctx != null ? ctx : context, toastMsg, Toast.LENGTH_SHORT).show();
                     return;
                 } else {
                     // make a "didnt kill anything" toast?
@@ -1049,6 +1050,23 @@ public class ActionHandler {
         } else {
             Log.d("ActionHandler", "Caller cannot kill processes, aborting");
         }
+    }
+
+
+    public static Context getPackageContext(Context context, String packageName) {
+        Context pkgContext = null;
+        if (context.getPackageName().equals(packageName)) {
+            pkgContext = context;
+        } else {
+            try {
+                pkgContext = context.createPackageContext(packageName,
+                        Context.CONTEXT_IGNORE_SECURITY
+                                | Context.CONTEXT_INCLUDE_CODE);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return pkgContext;
     }
 
     private static boolean isPackageLiveWalls(Context ctx, String pkg) {
