@@ -474,6 +474,16 @@ public class ActionHandler {
                 }
             }
         }
+
+        private static void sendSystemKeyToStatusBar(int keyCode) {
+            IStatusBarService service = getStatusBarService();
+            if (service != null) {
+                try {
+                    service.handleSystemKey(keyCode);
+                } catch (RemoteException e) {
+                }
+            }
+        }
     }
 
     public static void toggleRecentApps() {
@@ -625,10 +635,12 @@ public class ActionHandler {
             triggerVirtualKeypress(context, KeyEvent.KEYCODE_DPAD_LEFT);
             return;
         } else if (action.equals(SYSTEMUI_TASK_MEDIA_PREVIOUS)) {
-            dispatchMediaKeyWithWakeLock(KeyEvent.KEYCODE_MEDIA_PREVIOUS, context);
+            StatusBarHelper.sendSystemKeyToStatusBar(KeyEvent.KEYCODE_MEDIA_PREVIOUS);
+            //dispatchMediaKeyWithWakeLock(KeyEvent.KEYCODE_MEDIA_PREVIOUS, context);
             return;
         } else if (action.equals(SYSTEMUI_TASK_MEDIA_NEXT)) {
-            dispatchMediaKeyWithWakeLock(KeyEvent.KEYCODE_MEDIA_NEXT, context);
+            StatusBarHelper.sendSystemKeyToStatusBar(KeyEvent.KEYCODE_MEDIA_NEXT);
+            //dispatchMediaKeyWithWakeLock(KeyEvent.KEYCODE_MEDIA_NEXT, context);
             return;
         } else if (action.equals(SYSTEMUI_TASK_MEDIA_PLAY_PAUSE)) {
             dispatchMediaKeyWithWakeLock(KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, context);
