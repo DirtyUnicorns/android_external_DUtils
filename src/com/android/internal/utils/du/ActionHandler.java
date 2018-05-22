@@ -767,26 +767,31 @@ public class ActionHandler {
 
     private static ActivityManager.RunningTaskInfo getLastTask(Context context,
             final ActivityManager am) {
-        final String defaultHomePackage = resolveCurrentLauncherPackage(context);
-        List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(5);
-
+        final List<String> packageNames = getCurrentLauncherPackages(context);
+        final List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(5);
         for (int i = 1; i < tasks.size(); i++) {
             String packageName = tasks.get(i).topActivity.getPackageName();
-            if (!packageName.equals(defaultHomePackage)
-                    && !packageName.equals(context.getPackageName())
-                    && !packageName.equals(SYSTEMUI)) {
+            if (!packageName.equals(context.getPackageName())
+                    && !packageName.equals(SYSTEMUI)
+                    && !packageNames.contains(packageName)) {
                 return tasks.get(i);
             }
         }
         return null;
     }
 
-    private static String resolveCurrentLauncherPackage(Context context) {
-        final Intent launcherIntent = new Intent(Intent.ACTION_MAIN)
-                .addCategory(Intent.CATEGORY_HOME);
+    private static List<String> getCurrentLauncherPackages(Context context) {
         final PackageManager pm = context.getPackageManager();
-        final ResolveInfo launcherInfo = pm.resolveActivity(launcherIntent, 0);
-        return launcherInfo.activityInfo.packageName;
+        final List<ResolveInfo> homeActivities = new ArrayList<>();
+        pm.getHomeActivities(homeActivities);
+        final List<String> packageNames = new ArrayList<>();
+        for (ResolveInfo info : homeActivities) {
+            final String name = info.activityInfo.packageName;
+            if (!name.equals("com.android.settings")) {
+                packageNames.add(name);
+            }
+        }
+        return packageNames;
     }
 
     private static void sendCloseSystemWindows(String reason) {
